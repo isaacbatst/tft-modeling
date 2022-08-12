@@ -5,6 +5,7 @@
   "author": "Isaac Batista <isaacbatst@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "test": "jest",
     "dev": "ts-node src/index.ts"
   },
   "devDependencies": {
