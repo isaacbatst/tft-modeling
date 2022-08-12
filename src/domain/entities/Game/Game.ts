@@ -22,6 +22,7 @@
 // }
 
 export interface IPlayer {
+  id: string;
   name: string;
   // gold: number;
   // life: number;
@@ -31,7 +32,8 @@ export interface IPlayer {
 }
 
 export enum GameErrors {
-  BELLOW_MIN_PLAYERS = 'BELLOW_MIN_PLAYERS'
+  BELLOW_MIN_PLAYERS = 'BELLOW_MIN_PLAYERS',
+  REPEATED_PLAYER = 'REPEATED_PLAYER'
 }
 
 export class Game {
@@ -46,6 +48,21 @@ export class Game {
   private validatePlayers(players: IPlayer[]) {
     if (players.length < 2) {
       throw new Error(GameErrors.BELLOW_MIN_PLAYERS);
+    }
+
+    const hasRepeatedObject = players
+        .some((player, index) => players.indexOf(player) !== index);
+
+    if (hasRepeatedObject) {
+      throw new Error(GameErrors.REPEATED_PLAYER);
+    }
+
+    const hasRepeatedId = players
+        .some((iPlayer, index) => players
+            .findIndex((jPlayer) => jPlayer.id === iPlayer.id) !== index);
+
+    if (hasRepeatedId) {
+      throw new Error(GameErrors.REPEATED_PLAYER);
     }
   }
 }

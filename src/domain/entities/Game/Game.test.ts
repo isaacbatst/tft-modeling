@@ -13,7 +13,7 @@ describe('Game', () => {
 
   describe('Given 1 player is passed', () => {
     it('should throw BELLOW_MIN_PLAYERS error', () => {
-      const player: IPlayer = {name: 'player'};
+      const player: IPlayer = {id: 'any-id-1', name: 'player'};
       const players: IPlayer[] = [player];
 
       expect(() => {
@@ -24,14 +24,37 @@ describe('Game', () => {
 
   describe('Given 2 players are passed', () => {
     it('should NOT throw BELLOW_MIN_PLAYERS error', () => {
-      const player1: IPlayer = {name: 'player-1'};
-      const player2: IPlayer = {name: 'player-2'};
+      const player1: IPlayer = {id: 'any-id-1', name: 'player-1'};
+      const player2: IPlayer = {id: 'any-id-2', name: 'player-2'};
 
       const players: IPlayer[] = [player1, player2];
 
       expect(() => {
         new Game(players);
       }).not.toThrow(GameErrors.BELLOW_MIN_PLAYERS);
+    });
+  });
+
+  describe('Given repeated objects', () => {
+    it('should throw REPEATED_PLAYER error', () => {
+      const player1: IPlayer = {id: 'any-id-1', name: 'player-1'};
+      const player2: IPlayer = {id: 'any-id-1', name: 'player-2'};
+      const players = [player1, player2];
+
+      expect(() => {
+        new Game(players);
+      }).toThrow(GameErrors.REPEATED_PLAYER);
+    });
+  });
+
+  describe('Given repeated ids', () => {
+    it('should throw REPEATED_PLAYER error', () => {
+      const player: IPlayer = {id: 'any-id', name: 'player'};
+      const players = [player, player];
+
+      expect(() => {
+        new Game(players);
+      }).toThrow(GameErrors.REPEATED_PLAYER);
     });
   });
 });
