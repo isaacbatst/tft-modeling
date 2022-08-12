@@ -1,58 +1,76 @@
 // import {Character, CharacterAttributes, Sinergy} from './Character';
 // import {Item} from './Item';
 
-// class CharacterInGame {
-//   private character: Character;
-//   private level: number;
-//   private attributes: CharacterAttributes;
-//   private items: Item[];
-// }
-
-// class PlayerBoard {
-//   characters: CharacterInGame[];
-//   sinergies: Sinergy[];
-// }
-
-// class PlayerBench {
-//   characters: CharacterInGame[];
-// }
-
-// class PlayerHand {
-//   private characters: Character[];
-// }
-
-export interface IPlayer {
-  id: string;
-  name: string;
-  // gold: number;
-  // life: number;
-  // board: PlayerBoard;
-  // bench: PlayerBench;
-  // hand: PlayerHand;
-}
-
 export enum GameErrors {
   BELLOW_MIN_PLAYERS = 'BELLOW_MIN_PLAYERS',
   REPEATED_PLAYER = 'REPEATED_PLAYER'
 }
 
-export class Game {
-  private players: IPlayer[];
+// interface Card {
 
-  constructor(players: IPlayer[]) {
+// }
+
+// class Hand {
+//   private cards: Card[];
+
+//   constructor(cards: Card[]) {
+//     this.validateCards(cards);
+
+//     this.cards = cards;
+//   }
+
+//   private validateCards(cards: Card[]) {
+//     if (cards.length !== 5) {
+//       throw new Error('INVALID_CARDS_QUANTITY');
+//     }
+//   }
+// }
+
+export interface ICharacter {}
+
+export interface GameDeck {
+  takeRandomHand(): ICharacter[]
+}
+
+export interface IGamePlayer {
+  getId(): string
+  setHand(characters: ICharacter[]): void
+}
+
+export class Game {
+  private players: IGamePlayer[];
+  private deck: GameDeck;
+
+  constructor(players: IGamePlayer[], deck: GameDeck) {
     this.validatePlayers(players);
 
+    this.deck = deck;
     this.players = players;
   }
 
-  private validatePlayers(players: IPlayer[]) {
+  public start() {
+    this.givePlayersFirstHand();
+  }
+
+  private givePlayersFirstHand() {
+    this.players.forEach((player) => {
+      const hand = this.deck.takeRandomHand();
+
+      player.setHand(hand);
+    });
+  }
+
+  private validatePlayers(players: IGamePlayer[]) {
     if (players.length < 2) {
       throw new Error(GameErrors.BELLOW_MIN_PLAYERS);
     }
 
     const hasRepeatedId = players
-        .some((iPlayer, index) => players
-            .findIndex((jPlayer) => jPlayer.id === iPlayer.id) !== index);
+        .some((iPlayer, index) => {
+          const foundIndex = players
+              .findIndex((jPlayer) => jPlayer.getId() === iPlayer.getId());
+          return foundIndex !== index;
+        });
 
     if (hasRepeatedId) {
       throw new Error(GameErrors.REPEATED_PLAYER);

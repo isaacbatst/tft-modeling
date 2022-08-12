@@ -1,6 +1,8 @@
 # Requirements
 ## Use Cases
 ### Start Game
-
-- Requires more than one player
-- Players should not be repeated
+- Pre Requirements
+  - Requires more than one player
+  - Players should not be repeated
+- At start
+  - Should take a hand for each player
