@@ -1,4 +1,4 @@
-import {Game, GameErrors, IPlayer} from '../Game';
+import {Game, GameErrors, IPlayer} from './Game';
 
 describe('Game', () => {
   describe('Given 0 player is passed', () => {
