@@ -1,1 +1,1 @@
-console.log('DAWN OF TFT MODEL')
+console.log('DAWN OF TFT MODEL');
