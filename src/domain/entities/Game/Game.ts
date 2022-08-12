@@ -1,6 +1,8 @@
 // import {Character, CharacterAttributes, Sinergy} from './Character';
 // import {Item} from './Item';
 
+import {GamePlayersList} from './GamePlayersList';
+
 export enum GameErrors {
   BELLOW_MIN_PLAYERS = 'BELLOW_MIN_PLAYERS',
   REPEATED_PLAYER = 'REPEATED_PLAYER'
@@ -41,14 +43,12 @@ export interface IGamePlayer {
 export class Game {
   static INITIAL_GOLD = 3;
 
-  private players: IGamePlayer[];
+  private players: GamePlayersList;
   private deck: GameDeck;
 
   constructor(players: IGamePlayer[], deck: GameDeck) {
-    this.validatePlayers(players);
-
     this.deck = deck;
-    this.players = players;
+    this.players = new GamePlayersList(players);
   }
 
   public start() {
@@ -56,28 +56,11 @@ export class Game {
   }
 
   private givePlayersFirstHand() {
-    this.players.forEach((player) => {
+    this.players.getAll().forEach((player) => {
       const hand = this.deck.takeRandomHand();
 
       player.setHand(hand);
       player.setGold(Game.INITIAL_GOLD);
     });
-  }
-
-  private validatePlayers(players: IGamePlayer[]) {
-    if (players.length < 2) {
-      throw new Error(GameErrors.BELLOW_MIN_PLAYERS);
-    }
-
-    const hasRepeatedId = players
-        .some((iPlayer, index) => {
-          const foundIndex = players
-              .findIndex((jPlayer) => jPlayer.getId() === iPlayer.getId());
-          return foundIndex !== index;
-        });
-
-    if (hasRepeatedId) {
-      throw new Error(GameErrors.REPEATED_PLAYER);
-    }
   }
 }
