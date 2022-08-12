@@ -50,13 +50,6 @@ export class Game {
       throw new Error(GameErrors.BELLOW_MIN_PLAYERS);
     }
 
-    const hasRepeatedObject = players
-        .some((player, index) => players.indexOf(player) !== index);
-
-    if (hasRepeatedObject) {
-      throw new Error(GameErrors.REPEATED_PLAYER);
-    }
-
     const hasRepeatedId = players
         .some((iPlayer, index) => players
             .findIndex((jPlayer) => jPlayer.id === iPlayer.id) !== index);

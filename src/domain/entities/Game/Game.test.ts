@@ -35,18 +35,6 @@ describe('Game', () => {
     });
   });
 
-  describe('Given repeated objects', () => {
-    it('should throw REPEATED_PLAYER error', () => {
-      const player1: IPlayer = {id: 'any-id-1', name: 'player-1'};
-      const player2: IPlayer = {id: 'any-id-1', name: 'player-2'};
-      const players = [player1, player2];
-
-      expect(() => {
-        new Game(players);
-      }).toThrow(GameErrors.REPEATED_PLAYER);
-    });
-  });
-
   describe('Given repeated ids', () => {
     it('should throw REPEATED_PLAYER error', () => {
       const player: IPlayer = {id: 'any-id', name: 'player'};
