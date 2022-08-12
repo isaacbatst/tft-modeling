@@ -52,10 +52,10 @@ export class Game {
   }
 
   public start() {
-    this.givePlayersFirstHand();
+    this.setupPlayers();
   }
 
-  private givePlayersFirstHand() {
+  private setupPlayers() {
     this.players.getAll().forEach((player) => {
       const hand = this.deck.takeRandomHand();
 
