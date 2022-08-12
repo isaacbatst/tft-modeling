@@ -1,35 +1,51 @@
-import {Character, CharacterAttributes, Sinergy} from './Character';
-import {Item} from './Item';
+// import {Character, CharacterAttributes, Sinergy} from './Character';
+// import {Item} from './Item';
 
-class CharacterInGame {
-  private character: Character;
-  private level: number;
-  private attributes: CharacterAttributes;
-  private items: Item[];
+// class CharacterInGame {
+//   private character: Character;
+//   private level: number;
+//   private attributes: CharacterAttributes;
+//   private items: Item[];
+// }
+
+// class PlayerBoard {
+//   characters: CharacterInGame[];
+//   sinergies: Sinergy[];
+// }
+
+// class PlayerBench {
+//   characters: CharacterInGame[];
+// }
+
+// class PlayerHand {
+//   private characters: Character[];
+// }
+
+export interface IPlayer {
+  name: string;
+  // gold: number;
+  // life: number;
+  // board: PlayerBoard;
+  // bench: PlayerBench;
+  // hand: PlayerHand;
 }
 
-class PlayerBoard {
-  characters: CharacterInGame[];
-  sinergies: Sinergy[];
-}
-
-class PlayerBench {
-  characters: CharacterInGame[];
-}
-
-class PlayerHand {
-  private characters: Character[];
-}
-
-class Player {
-  private name: string;
-  private gold: number;
-  private life: number;
-  private board: PlayerBoard;
-  private bench: PlayerBench;
-  private hand: PlayerHand;
+export enum GameErrors {
+  BELLOW_MIN_PLAYERS = 'BELLOW_MIN_PLAYERS'
 }
 
 export class Game {
-  private players: Player[];
+  private players: IPlayer[];
+
+  constructor(players: IPlayer[]) {
+    this.validatePlayers(players);
+
+    this.players = players;
+  }
+
+  private validatePlayers(players: IPlayer[]) {
+    if (players.length < 2) {
+      throw new Error(GameErrors.BELLOW_MIN_PLAYERS);
+    }
+  }
 }
