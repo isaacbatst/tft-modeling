@@ -34,10 +34,13 @@ export interface GameDeck {
 
 export interface IGamePlayer {
   getId(): string
+  setGold(value: number): void
   setHand(characters: ICharacter[]): void
 }
 
 export class Game {
+  static INITIAL_GOLD = 3;
+
   private players: IGamePlayer[];
   private deck: GameDeck;
 
@@ -57,6 +60,7 @@ export class Game {
       const hand = this.deck.takeRandomHand();
 
       player.setHand(hand);
+      player.setGold(Game.INITIAL_GOLD);
     });
   }
 

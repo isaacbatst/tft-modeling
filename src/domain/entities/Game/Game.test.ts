@@ -13,9 +13,8 @@ class PlayerMock implements IGamePlayer {
     return this.id;
   }
 
-  setHand = jest.fn((): void => {
-    console.log('Mocked set hand called');
-  });
+  setHand = jest.fn();
+  setGold = jest.fn();
 }
 
 const makeSut = () => {
@@ -101,6 +100,16 @@ describe('Game', () => {
 
       players.forEach((player) => {
         expect(player.setHand).toBeCalled();
+      });
+    });
+
+    it('should call each player setGold with 3', () => {
+      const {game, players} = makeSut();
+
+      game.start();
+
+      players.forEach((player) => {
+        expect(player.setGold).toBeCalledWith(3);
       });
     });
   });
