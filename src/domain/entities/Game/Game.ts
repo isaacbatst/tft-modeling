@@ -33,6 +33,8 @@ export interface GameDeck {
 
 export interface IGamePlayer {
   getId(): string
+  getLife(): number
+  decrementLife(value: number): void
   incrementGold(value: number): void
   setGold(value: number): void
   setHand(characters: IHand[]): void
@@ -49,6 +51,10 @@ export interface IGamePlayersList {
   makeCouples(): [IGamePlayer, IGamePlayer][]
 }
 
+export interface IRoundMoments {
+  start(players: IGamePlayersList): Promise<void>
+}
+
 export class Game {
   static INITIAL_GOLD = 3;
   static ROUND_PREPARATION_TIME = 3;
@@ -60,17 +66,20 @@ export class Game {
   private stage: number;
   private round: number;
   private countdown: IGameCountdown;
+  private roundMoments: IRoundMoments;
 
   constructor(
       deck: GameDeck,
       countdown: IGameCountdown,
       playersList: IGamePlayersList,
+      roundMoments: IRoundMoments,
   ) {
     this.stage = 1;
     this.round = 1;
     this.deck = deck;
     this.countdown = countdown;
     this.players = playersList;
+    this.roundMoments = roundMoments;
   }
 
   public start() {
@@ -89,14 +98,20 @@ export class Game {
   }
 
   private async startRounds() {
-    this.countdown.subscribe((time) => console.log(time));
+    const shouldContinue = true;
 
-    await this.countdown.start(Game.ROUND_PREPARATION_TIME);
+    while (shouldContinue) {
+      await this.roundMoments.start(this.players);
 
-    this.players.makeCouples();
-    await this.countdown.start(Game.ROUND_BATTLE_TIME);
+      const players = this.players.getAll();
+      const remainingPlayers = players.filter((player) => player.getLife() > 0);
+      if (remainingPlayers.length < 2) {
+        break;
+      }
+      this.refillPlayers();
+    }
 
-    this.refillPlayers();
+    return this.players.getAll();
   }
 
   private refillPlayers() {

@@ -1,17 +1,5 @@
-import {IGamePlayer} from './Game';
+import {GamePlayerMock} from './GamePlayerMock';
 import {GamePlayersList, GamePlayersListErrors} from './GamePlayersList';
-
-class PlayerMock implements IGamePlayer {
-  constructor(private id: string) {}
-
-  getId(): string {
-    return this.id;
-  }
-
-  setHand = jest.fn();
-  setGold = jest.fn();
-  incrementGold = jest.fn();
-}
 
 describe('Given 0 player is passed', () => {
   it('should throw BELLOW_MIN_PLAYERS error', () => {
@@ -23,7 +11,7 @@ describe('Given 0 player is passed', () => {
 
 describe('Given 1 player is passed', () => {
   it('should throw BELLOW_MIN_PLAYERS error', () => {
-    const player1 = new PlayerMock('any-id-1');
+    const player1 = new GamePlayerMock('any-id-1');
 
     expect(() => {
       new GamePlayersList([player1]);
@@ -33,8 +21,8 @@ describe('Given 1 player is passed', () => {
 
 describe('Given repeated ids', () => {
   it('should throw REPEATED_PLAYER error', () => {
-    const player1 = new PlayerMock('any-id-1');
-    const player2 = new PlayerMock('any-id-1');
+    const player1 = new GamePlayerMock('any-id-1');
+    const player2 = new GamePlayerMock('any-id-1');
 
     expect(() => {
       new GamePlayersList([player1, player2]);
@@ -45,8 +33,8 @@ describe('Given repeated ids', () => {
 
 describe('Given 2 different players are passed', () => {
   it('should NOT throw BELLOW_MIN_PLAYERS error', () => {
-    const player1 = new PlayerMock('any-id-1');
-    const player2 = new PlayerMock('any-id-2');
+    const player1 = new GamePlayerMock('any-id-1');
+    const player2 = new GamePlayerMock('any-id-2');
 
     expect(() => {
       new GamePlayersList([player1, player2]);

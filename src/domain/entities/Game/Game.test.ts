@@ -1,7 +1,8 @@
 import {
   Game, GameDeck,
-  IGameCountdown, IGamePlayer, IGamePlayersList, IHand,
+  IGameCountdown, IGamePlayer, IGamePlayersList, IHand, IRoundMoments,
 } from './Game';
+import {GamePlayerMock} from './GamePlayerMock';
 
 class DeckMock implements GameDeck {
   takeRandomHand = jest.fn((): IHand[] => {
@@ -16,13 +17,22 @@ class CountdownMock implements IGameCountdown {
 }
 
 class GamePlayersListMock implements IGamePlayersList {
+  private players: IGamePlayer[] = [
+    new GamePlayerMock('any-id-1'),
+    new GamePlayerMock('any-id-2'),
+  ];
+
   makeCouples = jest.fn((): [IGamePlayer, IGamePlayer][] => {
     return [];
   });
 
   getAll(): IGamePlayer[] {
-    return [];
+    return this.players;
   }
+}
+
+class RoundMomentsMock implements IRoundMoments {
+  start = jest.fn();
 }
 
 const makeSut = () => {
@@ -30,11 +40,12 @@ const makeSut = () => {
 
   const countdown = new CountdownMock();
   const playersList = new GamePlayersListMock();
+  const roundMoments = new RoundMomentsMock();
 
-  const game = new Game(deck, countdown, playersList);
+  const game = new Game(deck, countdown, playersList, roundMoments);
 
   return {
-    game, deck, countdown, playersList,
+    game, deck, countdown, playersList, roundMoments,
   };
 };
 
@@ -68,43 +79,93 @@ describe('Game', () => {
       });
     });
 
-    it('should call countdown start with ROUND_PREPARATION_TIME', () => {
-      const {game, countdown} = makeSut();
-      game.start();
+    describe('Given player 1 dies on first round', () => {
+      it('should call round start only once', async () => {
+        const {game, roundMoments} = makeSut();
+        roundMoments.start
+            .mockImplementation(async (players: IGamePlayersList) => {
+              const [firstPlayer] = players.getAll();
+              firstPlayer.decrementLife(GamePlayerMock.INITIAL_LIFE);
+            });
 
-      expect(countdown.start).toHaveBeenCalledTimes(1);
-      expect(countdown.start).toBeCalledWith(Game.ROUND_PREPARATION_TIME);
-    });
+        await game.start();
 
-    it('should call playersList makeCouples', async () => {
-      const {game, playersList} = makeSut();
-      await game.start();
-
-      expect(playersList.makeCouples).toBeCalled();
-    });
-
-    it('should call countdown start with ROUND_BATTLE_TIME', async () => {
-      const {game, countdown} = makeSut();
-      await game.start();
-
-      expect(countdown.start).toHaveBeenCalledTimes(2);
-      expect(countdown.start).toBeCalledWith(Game.ROUND_BATTLE_TIME);
-    });
-
-    it('should call players refill functions after battle time', async () => {
-      const {game, playersList} = makeSut();
-      const promise = game.start();
-
-      playersList.getAll().forEach((player) => {
-        expect(player.incrementGold).not.toBeCalled();
-        expect(player.setHand).toHaveBeenCalledTimes(1);
+        expect(roundMoments.start).toHaveBeenCalledTimes(1);
       });
 
-      await promise;
+      it('should not call players incrementGold', async () => {
+        const {game, roundMoments, playersList} = makeSut();
+        roundMoments.start
+            .mockImplementation(async (players: IGamePlayersList) => {
+              const [firstPlayer] = players.getAll();
+              firstPlayer.decrementLife(GamePlayerMock.INITIAL_LIFE);
+            });
 
-      playersList.getAll().forEach((player) => {
-        expect(player.incrementGold).toBeCalled();
-        expect(player.setHand).toHaveBeenCalledTimes(2);
+        await game.start();
+
+        playersList.getAll().forEach((player) => {
+          expect(player.incrementGold).not.toBeCalled();
+        });
+      });
+
+      it('should call players setHand once', async () => {
+        const {game, roundMoments, playersList} = makeSut();
+        roundMoments.start
+            .mockImplementation(async (players: IGamePlayersList) => {
+              const [firstPlayer] = players.getAll();
+              firstPlayer.decrementLife(GamePlayerMock.INITIAL_LIFE);
+            });
+
+        await game.start();
+
+        playersList.getAll().forEach((player) => {
+          expect(player.setHand).toHaveBeenCalledTimes(1);
+        });
+      });
+    });
+
+    describe('Given player 1 dies on second round', () => {
+      it('should call round start twice', async () => {
+        const {game, roundMoments} = makeSut();
+        roundMoments.start
+            .mockImplementation(async (players: IGamePlayersList) => {
+              const [firstPlayer] = players.getAll();
+              firstPlayer.decrementLife(GamePlayerMock.INITIAL_LIFE / 2);
+            });
+
+        await game.start();
+
+        expect(roundMoments.start).toHaveBeenCalledTimes(2);
+      });
+
+      it('should call players incrementGold once', async () => {
+        const {game, roundMoments, playersList} = makeSut();
+        roundMoments.start
+            .mockImplementation(async (players: IGamePlayersList) => {
+              const [firstPlayer] = players.getAll();
+              firstPlayer.decrementLife(GamePlayerMock.INITIAL_LIFE / 2);
+            });
+
+        await game.start();
+
+        playersList.getAll().forEach((player) => {
+          expect(player.incrementGold).toHaveBeenCalledTimes(1);
+        });
+      });
+
+      it('should call players setHand twice', async () => {
+        const {game, roundMoments, playersList} = makeSut();
+        roundMoments.start
+            .mockImplementation(async (players: IGamePlayersList) => {
+              const [firstPlayer] = players.getAll();
+              firstPlayer.decrementLife(GamePlayerMock.INITIAL_LIFE / 2);
+            });
+
+        await game.start();
+
+        playersList.getAll().forEach((player) => {
+          expect(player.setHand).toHaveBeenCalledTimes(2);
+        });
       });
     });
   });
