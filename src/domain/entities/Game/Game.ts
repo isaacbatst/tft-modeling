@@ -35,7 +35,7 @@ export interface GameDeck {
 
 export interface IGamePlayer {
   getId(): string
-  getGold(): number
+  incrementGold(value: number): void
   setGold(value: number): void
   setHand(characters: IHand[]): void
 }
@@ -71,7 +71,7 @@ export class Game {
 
   public start() {
     this.setupPlayers();
-    this.startRounds();
+    return this.startRounds();
   }
 
 
@@ -93,8 +93,7 @@ export class Game {
 
   private refillPlayers() {
     this.players.getAll().forEach((player) => {
-      const gold = player.getGold();
-      player.setGold(gold + Game.GOLD_PER_ROUND);
+      player.incrementGold(Game.GOLD_PER_ROUND);
 
       const hand = this.deck.takeRandomHand();
       player.setHand(hand);

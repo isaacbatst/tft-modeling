@@ -16,11 +16,11 @@ class PlayerMock implements IGamePlayer {
 
   setHand = jest.fn();
   setGold = jest.fn();
-  getGold = jest.fn(() => 10);
+  incrementGold = jest.fn();
 }
 
 class CountdownMock implements IGameCountdown {
-  start = jest.fn(async () => {});
+  start = jest.fn();
   subscribe = jest.fn();
   unsubscribe = jest.fn();
 }
@@ -132,6 +132,24 @@ describe('Game', () => {
       game.start();
 
       expect(countdown.start).toBeCalledWith(Game.ROUND_TIME);
+    });
+
+    it('should call players refill functions after timeout', async () => {
+      const {game, players} = makeSut();
+
+      const promise = game.start();
+
+      players.forEach((player) => {
+        expect(player.incrementGold).not.toBeCalled();
+        expect(player.setHand).toHaveBeenCalledTimes(1);
+      });
+
+      await promise;
+
+      players.forEach((player) => {
+        expect(player.incrementGold).toBeCalled();
+        expect(player.setHand).toHaveBeenCalledTimes(2);
+      });
     });
   });
 });
