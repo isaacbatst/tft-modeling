@@ -1,5 +1,5 @@
 import {IGamePlayersList} from '../Game';
-import {IGameRoundMoment} from './GameRoundMoments';
+import {IGameRoundMoment} from './RoundsManager';
 
 
 export interface IGameCountdown {

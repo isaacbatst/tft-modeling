@@ -1,5 +1,5 @@
 import {
-  Game, GameDeck, IGameRoundMoments, IHand,
+  Game, GameDeck, IRoundsManager, IHand,
 } from './Game';
 import {GamePlayersListMock} from './GamePlayersListMock';
 
@@ -9,7 +9,7 @@ class DeckMock implements GameDeck {
   });
 }
 
-class RoundMomentsMock implements IGameRoundMoments {
+class RoundMomentsMock implements IRoundsManager {
   start = jest.fn();
 }
 

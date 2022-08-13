@@ -1,5 +1,5 @@
 import {IGamePlayersList} from '../Game';
-import {IGameRoundMomentsList} from './GameRoundMoments';
+import {IGameRoundMomentsList} from './RoundsManager';
 
 export interface IGameRoundMoment {
   start(players: IGamePlayersList): Promise<void>

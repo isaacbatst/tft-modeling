@@ -1,4 +1,4 @@
-import {GameDeck, IGamePlayersList, IGameRoundMoments} from '../Game';
+import {GameDeck, IGamePlayersList, IRoundsManager} from '../Game';
 
 
 export interface IGameRoundMoment {
@@ -15,7 +15,7 @@ export enum GameRoundMomentsErrors {
   INVALID_STAGE_AFTER_LAST = 'INVALID_STAGE_AFTER_LAST'
 }
 
-export class GameRoundMoments implements IGameRoundMoments {
+export class RoundsManager implements IRoundsManager {
   private stage = 0;
   private round = 0;
 

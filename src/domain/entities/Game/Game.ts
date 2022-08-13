@@ -41,7 +41,7 @@ export interface IGamePlayersList {
   makeCouples(): [IGamePlayer, IGamePlayer][]
 }
 
-export interface IGameRoundMoments {
+export interface IRoundsManager {
   start(
     players: IGamePlayersList,
     goldPerRound: number,
@@ -58,14 +58,15 @@ export class Game {
   constructor(
       private deck: GameDeck,
       private players: IGamePlayersList,
-      private roundMoments: IGameRoundMoments,
+      private roundsManager: IRoundsManager,
   ) {
   }
 
   public async start() {
     this.setupPlayers();
 
-    await this.roundMoments.start(this.players, Game.GOLD_PER_ROUND, this.deck);
+    await this.roundsManager
+        .start(this.players, Game.GOLD_PER_ROUND, this.deck);
 
     return {
       players: this.players.getAll(),
