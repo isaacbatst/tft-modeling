@@ -51,7 +51,7 @@ export interface IGamePlayersList {
   makeCouples(): [IGamePlayer, IGamePlayer][]
 }
 
-export interface IRoundMoments {
+export interface IGameRoundMoments {
   start(players: IGamePlayersList): Promise<void>
 }
 
@@ -66,13 +66,13 @@ export class Game {
   private stage: number;
   private round: number;
   private countdown: IGameCountdown;
-  private roundMoments: IRoundMoments;
+  private roundMoments: IGameRoundMoments;
 
   constructor(
       deck: GameDeck,
       countdown: IGameCountdown,
       playersList: IGamePlayersList,
-      roundMoments: IRoundMoments,
+      roundMoments: IGameRoundMoments,
   ) {
     this.stage = 1;
     this.round = 1;

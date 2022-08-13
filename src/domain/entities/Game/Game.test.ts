@@ -1,6 +1,6 @@
 import {
   Game, GameDeck,
-  IGameCountdown, IGamePlayer, IGamePlayersList, IHand, IRoundMoments,
+  IGameCountdown, IGamePlayer, IGamePlayersList, IHand, IGameRoundMoments,
 } from './Game';
 import {GamePlayerMock} from './GamePlayerMock';
 
@@ -31,7 +31,7 @@ class GamePlayersListMock implements IGamePlayersList {
   }
 }
 
-class RoundMomentsMock implements IRoundMoments {
+class RoundMomentsMock implements IGameRoundMoments {
   start = jest.fn();
 }
 
