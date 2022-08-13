@@ -1,22 +1,12 @@
 import {
-  Game, GameDeck, GameErrors, IHand, IGamePlayer, IGameCountdown} from './Game';
+  Game, GameDeck,
+  IGameCountdown, IGamePlayer, IGamePlayersList, IHand,
+} from './Game';
 
 class DeckMock implements GameDeck {
   takeRandomHand = jest.fn((): IHand[] => {
     return [];
   });
-}
-
-class PlayerMock implements IGamePlayer {
-  constructor(private id: string) {}
-
-  getId(): string {
-    return this.id;
-  }
-
-  setHand = jest.fn();
-  setGold = jest.fn();
-  incrementGold = jest.fn();
 }
 
 class CountdownMock implements IGameCountdown {
@@ -25,103 +15,55 @@ class CountdownMock implements IGameCountdown {
   unsubscribe = jest.fn();
 }
 
+class GamePlayersListMock implements IGamePlayersList {
+  makeCouples = jest.fn((): [IGamePlayer, IGamePlayer][] => {
+    return [];
+  });
+
+  getAll(): IGamePlayer[] {
+    return [];
+  }
+}
+
 const makeSut = () => {
-  const player1 = new PlayerMock('any-id-1');
-  const player2 = new PlayerMock('any-id-2');
   const deck = new DeckMock();
 
-  const players = [player1, player2];
   const countdown = new CountdownMock();
+  const playersList = new GamePlayersListMock();
 
-  const game = new Game(players, deck, countdown);
+  const game = new Game(deck, countdown, playersList);
 
   return {
-    game, deck, players, countdown,
+    game, deck, countdown, playersList,
   };
 };
 
 describe('Game', () => {
-  describe('Given 0 player is passed', () => {
-    it('should throw BELLOW_MIN_PLAYERS error', () => {
-      const players: PlayerMock[] = [];
-      const deck = new DeckMock();
-      const countdown = new CountdownMock();
-
-      expect(() => {
-        new Game(players, deck, countdown);
-      }).toThrow(GameErrors.BELLOW_MIN_PLAYERS);
-    });
-  });
-
-  describe('Given 1 player is passed', () => {
-    it('should throw BELLOW_MIN_PLAYERS error', () => {
-      const player: PlayerMock = new PlayerMock('any-id');
-      const players = [player];
-      const deck = new DeckMock();
-      const countdown = new CountdownMock();
-
-      expect(() => {
-        new Game(players, deck, countdown);
-      }).toThrow(GameErrors.BELLOW_MIN_PLAYERS);
-    });
-  });
-
-  describe('Given repeated ids', () => {
-    it('should throw REPEATED_PLAYER error', () => {
-      const player = new PlayerMock('any-id-1');
-      const player2 = new PlayerMock('any-id-1');
-
-      const players = [player, player2];
-      const deck = new DeckMock();
-      const countdown = new CountdownMock();
-
-      expect(() => {
-        new Game(players, deck, countdown);
-      }).toThrow(GameErrors.REPEATED_PLAYER);
-    });
-  });
-
-
-  describe('Given 2 different players are passed', () => {
-    it('should NOT throw BELLOW_MIN_PLAYERS error', () => {
-      const player1 = new PlayerMock('any-id-1');
-      const player2 = new PlayerMock('any-id-2');
-      const deck = new DeckMock();
-      const countdown = new CountdownMock();
-
-      const players = [player1, player2];
-
-      expect(() => {
-        new Game(players, deck, countdown);
-      }).not.toThrow(GameErrors.BELLOW_MIN_PLAYERS);
-    });
-  });
-
   describe('On start', () => {
     it('should call deck takeRandomHand for each player', () => {
-      const {game, deck, players} = makeSut();
+      const {game, deck, playersList} = makeSut();
 
       game.start();
 
-      expect(deck.takeRandomHand).toBeCalledTimes(players.length);
+      expect(deck.takeRandomHand).toBeCalledTimes(playersList.getAll().length);
     });
 
     it('should call each player setHand with takeRandomHand return', () => {
-      const {game, players} = makeSut();
+      const {game, playersList} = makeSut();
 
       game.start();
 
-      players.forEach((player) => {
+      playersList.getAll().forEach((player) => {
         expect(player.setHand).toBeCalled();
       });
     });
 
     it('should call each player setGold with 3', () => {
-      const {game, players} = makeSut();
+      const {game, playersList} = makeSut();
 
       game.start();
 
-      players.forEach((player) => {
+      playersList.getAll().forEach((player) => {
         expect(player.setGold).toBeCalledWith(3);
       });
     });
@@ -134,6 +76,13 @@ describe('Game', () => {
       expect(countdown.start).toBeCalledWith(Game.ROUND_PREPARATION_TIME);
     });
 
+    it('should call playersList makeCouples', async () => {
+      const {game, playersList} = makeSut();
+      await game.start();
+
+      expect(playersList.makeCouples).toBeCalled();
+    });
+
     it('should call countdown start with ROUND_BATTLE_TIME', async () => {
       const {game, countdown} = makeSut();
       await game.start();
@@ -143,17 +92,17 @@ describe('Game', () => {
     });
 
     it('should call players refill functions after battle time', async () => {
-      const {game, players} = makeSut();
+      const {game, playersList} = makeSut();
       const promise = game.start();
 
-      players.forEach((player) => {
+      playersList.getAll().forEach((player) => {
         expect(player.incrementGold).not.toBeCalled();
         expect(player.setHand).toHaveBeenCalledTimes(1);
       });
 
       await promise;
 
-      players.forEach((player) => {
+      playersList.getAll().forEach((player) => {
         expect(player.incrementGold).toBeCalled();
         expect(player.setHand).toHaveBeenCalledTimes(2);
       });

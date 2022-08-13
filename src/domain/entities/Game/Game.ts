@@ -1,7 +1,5 @@
 // import {Character, CharacterAttributes, Sinergy} from './Character';
 // import {Item} from './Item';
-import {GamePlayersList} from './GamePlayersList';
-
 export enum GameErrors {
   BELLOW_MIN_PLAYERS = 'BELLOW_MIN_PLAYERS',
   REPEATED_PLAYER = 'REPEATED_PLAYER'
@@ -46,28 +44,33 @@ export interface IGameCountdown {
   start(roundTime: number): Promise<void>;
 }
 
+export interface IGamePlayersList {
+  getAll(): IGamePlayer[];
+  makeCouples(): [IGamePlayer, IGamePlayer][]
+}
+
 export class Game {
   static INITIAL_GOLD = 3;
   static ROUND_PREPARATION_TIME = 3;
   static ROUND_BATTLE_TIME = 5;
   static GOLD_PER_ROUND = 5;
 
-  private players: GamePlayersList;
+  private players: IGamePlayersList;
   private deck: GameDeck;
   private stage: number;
   private round: number;
   private countdown: IGameCountdown;
 
   constructor(
-      players: IGamePlayer[],
       deck: GameDeck,
       countdown: IGameCountdown,
+      playersList: IGamePlayersList,
   ) {
     this.stage = 1;
     this.round = 1;
     this.deck = deck;
     this.countdown = countdown;
-    this.players = new GamePlayersList(players);
+    this.players = playersList;
   }
 
   public start() {
@@ -89,6 +92,7 @@ export class Game {
     this.countdown.subscribe((time) => console.log(time));
 
     await this.countdown.start(Game.ROUND_PREPARATION_TIME);
+    this.players.makeCouples();
     await this.countdown.start(Game.ROUND_BATTLE_TIME);
     this.refillPlayers();
   }

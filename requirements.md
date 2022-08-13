@@ -11,3 +11,5 @@
 - Each round
   - Renew players hands 
   - Give players 5 gold
+- Each fight
+  - Sort players to fight each other

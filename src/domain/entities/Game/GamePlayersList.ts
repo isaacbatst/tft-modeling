@@ -1,11 +1,11 @@
-import {IGamePlayer} from './Game';
+import {IGamePlayer, IGamePlayersList} from './Game';
 
 export enum GamePlayersListErrors {
   BELLOW_MIN_PLAYERS = 'BELLOW_MIN_PLAYERS',
   REPEATED_PLAYER = 'REPEATED_PLAYER'
 }
 
-export class GamePlayersList {
+export class GamePlayersList implements IGamePlayersList {
   private players: IGamePlayer[];
 
   constructor(players: IGamePlayer[]) {
@@ -32,5 +32,9 @@ export class GamePlayersList {
     if (hasRepeatedId) {
       throw new Error(GamePlayersListErrors.REPEATED_PLAYER);
     }
+  }
+
+  makeCouples(): [IGamePlayer, IGamePlayer][] {
+    throw new Error('Not Implemented');
   }
 }
