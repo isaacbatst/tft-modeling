@@ -103,15 +103,20 @@ export class Game {
     while (shouldContinue) {
       await this.roundMoments.start(this.players);
 
-      const players = this.players.getAll();
-      const remainingPlayers = players.filter((player) => player.getLife() > 0);
-      if (remainingPlayers.length < 2) {
+      if (this.checkIfShouldStop()) {
         break;
       }
+
       this.refillPlayers();
     }
 
     return this.players.getAll();
+  }
+
+  private checkIfShouldStop(): boolean {
+    const players = this.players.getAll();
+    const remainingPlayers = players.filter((player) => player.getLife() > 0);
+    return remainingPlayers.length < 2;
   }
 
   private refillPlayers() {
