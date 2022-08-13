@@ -1,7 +1,8 @@
 // import {Character, CharacterAttributes, Sinergy} from './Character';
 // import {Item} from './Item';
 
-import {DeckForCarousel} from './RoundsManager/Carousel';
+import {DeckForCarousel,
+  PlayersListForCarousel} from './RoundsManager/Carousel';
 
 // interface Card {
 
@@ -37,9 +38,11 @@ export interface IGamePlayer {
   setHand(characters: IHand[]): void
 }
 
-export interface IGamePlayersList {
+export type PlayerCouple = [IGamePlayer, IGamePlayer];
+
+export interface IGamePlayersList extends PlayersListForCarousel {
   getAll(): IGamePlayer[];
-  makeCouples(): [IGamePlayer, IGamePlayer][]
+  makeBattleCouples(): PlayerCouple[]
 }
 
 export interface IRoundsManager {

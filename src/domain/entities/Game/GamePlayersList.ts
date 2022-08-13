@@ -1,4 +1,4 @@
-import {IGamePlayer, IGamePlayersList} from './Game';
+import {IGamePlayer, IGamePlayersList, PlayerCouple} from './Game';
 
 export enum GamePlayersListErrors {
   BELLOW_MIN_PLAYERS = 'BELLOW_MIN_PLAYERS',
@@ -34,7 +34,27 @@ export class GamePlayersList implements IGamePlayersList {
     }
   }
 
-  makeCouples(): [IGamePlayer, IGamePlayer][] {
+  makeBattleCouples(): PlayerCouple[] {
     throw new Error('Not Implemented');
+  }
+
+  makeCarouselCouples(): PlayerCouple[] {
+    const playersSortedByLife = this.players.slice().sort((a, b) => {
+      return a.getLife() - b.getLife();
+    });
+
+    const couples: PlayerCouple[] = [];
+
+    for (let index = 0; index < playersSortedByLife.length; index += 2) {
+      const player = playersSortedByLife[index];
+      const nextPlayer = playersSortedByLife[index + 1];
+
+      // TODO should handle "player shadow" strategy
+      if (nextPlayer) {
+        couples.push([player, nextPlayer]);
+      }
+    }
+
+    return couples;
   }
 }

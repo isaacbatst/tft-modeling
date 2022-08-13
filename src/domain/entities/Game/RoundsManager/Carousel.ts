@@ -1,4 +1,4 @@
-import {IGamePlayersList} from '../Game';
+import {PlayerCouple} from '../Game';
 import {IGameRoundMoment} from './RoundsManager';
 
 
@@ -27,25 +27,45 @@ export interface DeckForCarousel {
   takeRandomCarouselBoard(): CarouselBoard
 }
 
+export interface PlayersListForCarousel {
+  makeCarouselCouples(): PlayerCouple[]
+}
+
 export interface CarouselEventsDispatchers {
   start: (board: CarouselBoard) => void,
-  end: () => void
+  end: () => void,
+  releasePlayers: () => void
 }
 
 export class Carousel implements IGameRoundMoment {
-  static COUNTDOWN_TIME = 30;
+  static MOMENT_COUNTDOWN_TIME = 30;
+  static PLAYERS_COUNTDOWN_TIME = 5;
 
   constructor(
-    private countdown: IGameCountdown,
+    private momentCountdown: IGameCountdown,
+    private playersCountdown: IGameCountdown,
     private dispatch: CarouselEventsDispatchers,
   ) {}
 
-  async start(players: IGamePlayersList, deck: DeckForCarousel): Promise<void> {
+  async start(
+      playersList: PlayersListForCarousel, deck: DeckForCarousel,
+  ): Promise<void> {
     const board = deck.takeRandomCarouselBoard();
+    const couples = playersList.makeCarouselCouples();
 
     this.dispatch.start(board);
 
-    await this.countdown.start(Carousel.COUNTDOWN_TIME);
+    const momentCountdown = this.momentCountdown
+        .start(Carousel.MOMENT_COUNTDOWN_TIME);
+
+
+    for (let index = 0; index < couples.length; index += 1) {
+      this.dispatch.releasePlayers();
+      await this.playersCountdown
+          .start(Carousel.PLAYERS_COUNTDOWN_TIME);
+    }
+
+    await momentCountdown;
 
     this.dispatch.end();
   }

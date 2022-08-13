@@ -1,4 +1,4 @@
-import {IGamePlayer, IGamePlayersList} from './Game';
+import {IGamePlayer, IGamePlayersList, PlayerCouple} from './Game';
 import {GamePlayerMock} from './GamePlayerMock';
 
 export class GamePlayersListMock implements IGamePlayersList {
@@ -7,11 +7,18 @@ export class GamePlayersListMock implements IGamePlayersList {
     new GamePlayerMock('any-id-2'),
   ];
 
-  makeCouples = jest.fn((): [IGamePlayer, IGamePlayer][] => {
+  makeBattleCouples = jest.fn((): PlayerCouple[] => {
     return [];
   });
 
   getAll(): IGamePlayer[] {
     return this.players;
+  }
+
+  makeCarouselCouples(): PlayerCouple[] {
+    const [player1, player2] = this.players;
+    return [
+      [player1, player2],
+    ];
   }
 }
