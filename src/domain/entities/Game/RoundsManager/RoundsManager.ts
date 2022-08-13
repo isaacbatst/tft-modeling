@@ -2,7 +2,7 @@ import {GameDeck, IGamePlayersList, IRoundsManager} from '../Game';
 
 
 export interface IGameRoundMoment {
-  start(players: IGamePlayersList): Promise<void>
+  start(players: IGamePlayersList, deck: GameDeck): Promise<void>
 }
 export interface IGameRoundMomentsList {
   getAll(): IGameRoundMoment[],
@@ -37,7 +37,7 @@ export class RoundsManager implements IRoundsManager {
 
     for (let index = 0; index < moments.length; index += 1) {
       const moment = moments[index];
-      await moment.start(players);
+      await moment.start(players, deck);
 
       if (this.checkIfShouldStop(players)) {
         break;

@@ -1,13 +1,9 @@
+import {DeckMock} from './DeckMock';
 import {
-  Game, GameDeck, IRoundsManager, IHand,
+  Game, IRoundsManager,
 } from './Game';
 import {GamePlayersListMock} from './GamePlayersListMock';
 
-class DeckMock implements GameDeck {
-  takeRandomHand = jest.fn((): IHand[] => {
-    return [];
-  });
-}
 
 class RoundMomentsMock implements IRoundsManager {
   start = jest.fn();

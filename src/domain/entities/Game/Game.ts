@@ -1,6 +1,8 @@
 // import {Character, CharacterAttributes, Sinergy} from './Character';
 // import {Item} from './Item';
 
+import {DeckForCarousel} from './RoundsManager/Carousel';
+
 // interface Card {
 
 // }
@@ -22,9 +24,8 @@
 // }
 
 export interface IHand {}
-
-export interface GameDeck {
-  takeRandomHand(): IHand[]
+export interface GameDeck extends DeckForCarousel {
+  takeRandomHand(): IHand[];
 }
 
 export interface IGamePlayer {
