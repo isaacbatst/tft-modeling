@@ -8,17 +8,15 @@ enum GameCountdownErrors {
 export class GameCountdown implements IGameCountdown {
   private currentTime: number;
   private countdownSubscribers: Function[];
-  private roundTime: number;
+  private roundTime: number = 0;
 
-  constructor(roundTime: number) {
-    this.validateRoundTime(roundTime);
-
-    this.roundTime = roundTime;
+  constructor() {
     this.currentTime = 0;
     this.countdownSubscribers = [];
   }
 
-  public async start() {
+  public async start(roundTime: number) {
+    this.setRoundTime(roundTime);
     this.setCurrentTime(this.roundTime);
 
     const interval = setInterval(() => {
@@ -60,8 +58,8 @@ export class GameCountdown implements IGameCountdown {
         .forEach((callback) => callback(this.currentTime));
   }
 
-  private validateRoundTime(value: number) {
-    if (value < 0) {
+  private setRoundTime(value: number) {
+    if (value <= 0) {
       throw new Error(GameCountdownErrors.MIN_ROUND_TIME_VALUE);
     }
 

@@ -43,7 +43,7 @@ export interface IGamePlayer {
 export interface IGameCountdown {
   subscribe(callback: (time: number) => void): number;
   unsubscribe(index: number): void;
-  start(): Promise<void>;
+  start(roundTime: number): Promise<void>;
 }
 
 export class Game {
@@ -87,11 +87,8 @@ export class Game {
   private async startRounds() {
     this.countdown.subscribe((time) => console.log(time));
 
-    while (true) {
-      await this.countdown.start();
-      console.log(this.players);
-      this.refillPlayers();
-    }
+    await this.countdown.start(Game.ROUND_TIME);
+    this.refillPlayers();
   }
 
   private refillPlayers() {

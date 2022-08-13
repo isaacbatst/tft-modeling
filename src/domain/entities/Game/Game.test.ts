@@ -20,7 +20,7 @@ class PlayerMock implements IGamePlayer {
 }
 
 class CountdownMock implements IGameCountdown {
-  start = jest.fn();
+  start = jest.fn(async () => {});
   subscribe = jest.fn();
   unsubscribe = jest.fn();
 }
@@ -36,7 +36,7 @@ const makeSut = () => {
   const game = new Game(players, deck, countdown);
 
   return {
-    game, deck, players,
+    game, deck, players, countdown,
   };
 };
 
@@ -124,6 +124,14 @@ describe('Game', () => {
       players.forEach((player) => {
         expect(player.setGold).toBeCalledWith(3);
       });
+    });
+
+    it('should call countdown start with ROUND_TIME', () => {
+      const {game, countdown} = makeSut();
+
+      game.start();
+
+      expect(countdown.start).toBeCalledWith(Game.ROUND_TIME);
     });
   });
 });
