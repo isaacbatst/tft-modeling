@@ -29,21 +29,23 @@ export enum GameErrors {
 //   }
 // }
 
-export interface ICharacter {}
+export interface IHand {}
 
 export interface GameDeck {
-  takeRandomHand(): ICharacter[]
+  takeRandomHand(): IHand[]
 }
 
 export interface IGamePlayer {
   getId(): string
+  getGold(): number
   setGold(value: number): void
-  setHand(characters: ICharacter[]): void
+  setHand(characters: IHand[]): void
 }
 
 export class Game {
   static INITIAL_GOLD = 3;
-  static ROUND_TIME = 15;
+  static ROUND_TIME = 3;
+  static GOLD_PER_ROUND = 5;
 
   private players: GamePlayersList;
   private deck: GameDeck;
@@ -79,6 +81,18 @@ export class Game {
 
     while (true) {
       await this.countdown.startRound();
+      console.log(this.players);
+      this.refillPlayers();
     }
+  }
+
+  private refillPlayers() {
+    this.players.getAll().forEach((player) => {
+      const gold = player.getGold();
+      player.setGold(gold + Game.GOLD_PER_ROUND);
+
+      const hand = this.deck.takeRandomHand();
+      player.setHand(hand);
+    });
   }
 }

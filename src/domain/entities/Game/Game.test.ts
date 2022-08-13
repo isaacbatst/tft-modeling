@@ -1,7 +1,7 @@
-import {Game, GameDeck, GameErrors, ICharacter, IGamePlayer} from './Game';
+import {Game, GameDeck, GameErrors, IHand, IGamePlayer} from './Game';
 
 class DeckMock implements GameDeck {
-  takeRandomHand = jest.fn((): ICharacter[] => {
+  takeRandomHand = jest.fn((): IHand[] => {
     return [];
   });
 }
@@ -15,6 +15,7 @@ class PlayerMock implements IGamePlayer {
 
   setHand = jest.fn();
   setGold = jest.fn();
+  getGold = jest.fn(() => 10);
 }
 
 const makeSut = () => {
