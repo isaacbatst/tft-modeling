@@ -92,8 +92,10 @@ export class Game {
     this.countdown.subscribe((time) => console.log(time));
 
     await this.countdown.start(Game.ROUND_PREPARATION_TIME);
+
     this.players.makeCouples();
     await this.countdown.start(Game.ROUND_BATTLE_TIME);
+
     this.refillPlayers();
   }
 
