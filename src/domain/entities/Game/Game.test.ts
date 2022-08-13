@@ -1,8 +1,8 @@
 import {
-  Game, GameDeck,
-  IGameCountdown, IGamePlayer, IGamePlayersList, IHand, IGameRoundMoments,
+  Game, GameDeck, IGamePlayersList, IGameRoundMoment, IHand,
 } from './Game';
 import {GamePlayerMock} from './GamePlayerMock';
+import {GamePlayersListMock} from './GamePlayersListMock';
 
 class DeckMock implements GameDeck {
   takeRandomHand = jest.fn((): IHand[] => {
@@ -10,28 +10,7 @@ class DeckMock implements GameDeck {
   });
 }
 
-class CountdownMock implements IGameCountdown {
-  start = jest.fn();
-  subscribe = jest.fn();
-  unsubscribe = jest.fn();
-}
-
-class GamePlayersListMock implements IGamePlayersList {
-  private players: IGamePlayer[] = [
-    new GamePlayerMock('any-id-1'),
-    new GamePlayerMock('any-id-2'),
-  ];
-
-  makeCouples = jest.fn((): [IGamePlayer, IGamePlayer][] => {
-    return [];
-  });
-
-  getAll(): IGamePlayer[] {
-    return this.players;
-  }
-}
-
-class RoundMomentsMock implements IGameRoundMoments {
+class RoundMomentsMock implements IGameRoundMoment {
   start = jest.fn();
 
   killPlayerOnFirstRound = async (players: IGamePlayersList) => {
@@ -48,14 +27,13 @@ class RoundMomentsMock implements IGameRoundMoments {
 const makeSut = () => {
   const deck = new DeckMock();
 
-  const countdown = new CountdownMock();
   const playersList = new GamePlayersListMock();
   const roundMoments = new RoundMomentsMock();
 
-  const game = new Game(deck, countdown, playersList, roundMoments);
+  const game = new Game(deck, playersList, roundMoments);
 
   return {
-    game, deck, countdown, playersList, roundMoments,
+    game, deck, playersList, roundMoments,
   };
 };
 

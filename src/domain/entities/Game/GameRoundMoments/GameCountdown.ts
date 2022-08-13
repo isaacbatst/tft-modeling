@@ -1,4 +1,4 @@
-import {IGameCountdown} from './Game';
+import {IGameCountdown} from './Carousel';
 
 enum GameCountdownErrors {
   MIN_CURRENT_TIME_VALUE = 'MIN_CURRENT_TIME_VALUE',

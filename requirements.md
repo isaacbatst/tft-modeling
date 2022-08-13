@@ -13,3 +13,9 @@
   - Give players 5 gold
   - If only one player remains
     - Game should finish
+  - Else
+    - Should go to next round
+
+#### Carousel
+- Init countdown
+  - Should resolve when countdown ends

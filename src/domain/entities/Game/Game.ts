@@ -40,18 +40,12 @@ export interface IGamePlayer {
   setHand(characters: IHand[]): void
 }
 
-export interface IGameCountdown {
-  subscribe(callback: (time: number) => void): number;
-  unsubscribe(index: number): void;
-  start(roundTime: number): Promise<void>;
-}
-
 export interface IGamePlayersList {
   getAll(): IGamePlayer[];
   makeCouples(): [IGamePlayer, IGamePlayer][]
 }
 
-export interface IGameRoundMoments {
+export interface IGameRoundMoment {
   start(players: IGamePlayersList): Promise<void>
 }
 
@@ -85,19 +79,16 @@ export class Game {
   private deck: GameDeck;
   private stage: GameStage;
   private round: number;
-  private countdown: IGameCountdown;
-  private roundMoments: IGameRoundMoments;
+  private roundMoments: IGameRoundMoment;
 
   constructor(
       deck: GameDeck,
-      countdown: IGameCountdown,
       playersList: IGamePlayersList,
-      roundMoments: IGameRoundMoments,
+      roundMoments: IGameRoundMoment,
   ) {
     this.stage = 1;
     this.round = 1;
     this.deck = deck;
-    this.countdown = countdown;
     this.players = playersList;
     this.roundMoments = roundMoments;
   }
