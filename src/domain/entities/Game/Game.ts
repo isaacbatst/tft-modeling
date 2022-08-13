@@ -1,7 +1,5 @@
 // import {Character, CharacterAttributes, Sinergy} from './Character';
 // import {Item} from './Item';
-
-import {GameCountdown} from './GameCountdown';
 import {GamePlayersList} from './GamePlayersList';
 
 export enum GameErrors {
@@ -42,6 +40,12 @@ export interface IGamePlayer {
   setHand(characters: IHand[]): void
 }
 
+export interface IGameCountdown {
+  subscribe(callback: (time: number) => void): number;
+  unsubscribe(index: number): void;
+  start(): Promise<void>;
+}
+
 export class Game {
   static INITIAL_GOLD = 3;
   static ROUND_TIME = 3;
@@ -51,13 +55,17 @@ export class Game {
   private deck: GameDeck;
   private stage: number;
   private round: number;
-  private countdown: GameCountdown;
+  private countdown: IGameCountdown;
 
-  constructor(players: IGamePlayer[], deck: GameDeck) {
+  constructor(
+      players: IGamePlayer[],
+      deck: GameDeck,
+      countdown: IGameCountdown,
+  ) {
     this.stage = 1;
     this.round = 1;
     this.deck = deck;
-    this.countdown = new GameCountdown(Game.ROUND_TIME);
+    this.countdown = countdown;
     this.players = new GamePlayersList(players);
   }
 
@@ -77,10 +85,10 @@ export class Game {
   }
 
   private async startRounds() {
-    this.countdown.subscribeCountdown((time) => console.log(time));
+    this.countdown.subscribe((time) => console.log(time));
 
     while (true) {
-      await this.countdown.startRound();
+      await this.countdown.start();
       console.log(this.players);
       this.refillPlayers();
     }

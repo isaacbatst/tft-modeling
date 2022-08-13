@@ -1,4 +1,5 @@
-import {Game, GameDeck, GameErrors, IHand, IGamePlayer} from './Game';
+import {
+  Game, GameDeck, GameErrors, IHand, IGamePlayer, IGameCountdown} from './Game';
 
 class DeckMock implements GameDeck {
   takeRandomHand = jest.fn((): IHand[] => {
@@ -18,14 +19,21 @@ class PlayerMock implements IGamePlayer {
   getGold = jest.fn(() => 10);
 }
 
+class CountdownMock implements IGameCountdown {
+  start = jest.fn();
+  subscribe = jest.fn();
+  unsubscribe = jest.fn();
+}
+
 const makeSut = () => {
   const player1 = new PlayerMock('any-id-1');
   const player2 = new PlayerMock('any-id-2');
   const deck = new DeckMock();
 
   const players = [player1, player2];
+  const countdown = new CountdownMock();
 
-  const game = new Game(players, deck);
+  const game = new Game(players, deck, countdown);
 
   return {
     game, deck, players,
@@ -37,9 +45,10 @@ describe('Game', () => {
     it('should throw BELLOW_MIN_PLAYERS error', () => {
       const players: PlayerMock[] = [];
       const deck = new DeckMock();
+      const countdown = new CountdownMock();
 
       expect(() => {
-        new Game(players, deck);
+        new Game(players, deck, countdown);
       }).toThrow(GameErrors.BELLOW_MIN_PLAYERS);
     });
   });
@@ -49,9 +58,10 @@ describe('Game', () => {
       const player: PlayerMock = new PlayerMock('any-id');
       const players = [player];
       const deck = new DeckMock();
+      const countdown = new CountdownMock();
 
       expect(() => {
-        new Game(players, deck);
+        new Game(players, deck, countdown);
       }).toThrow(GameErrors.BELLOW_MIN_PLAYERS);
     });
   });
@@ -63,9 +73,10 @@ describe('Game', () => {
 
       const players = [player, player2];
       const deck = new DeckMock();
+      const countdown = new CountdownMock();
 
       expect(() => {
-        new Game(players, deck);
+        new Game(players, deck, countdown);
       }).toThrow(GameErrors.REPEATED_PLAYER);
     });
   });
@@ -76,11 +87,12 @@ describe('Game', () => {
       const player1 = new PlayerMock('any-id-1');
       const player2 = new PlayerMock('any-id-2');
       const deck = new DeckMock();
+      const countdown = new CountdownMock();
 
       const players = [player1, player2];
 
       expect(() => {
-        new Game(players, deck);
+        new Game(players, deck, countdown);
       }).not.toThrow(GameErrors.BELLOW_MIN_PLAYERS);
     });
   });

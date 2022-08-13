@@ -1,9 +1,11 @@
+import {IGameCountdown} from './Game';
+
 enum GameCountdownErrors {
   MIN_CURRENT_TIME_VALUE = 'MIN_CURRENT_TIME_VALUE',
   MIN_ROUND_TIME_VALUE = 'MIN_ROUND_TIME_VALUE'
 }
 
-export class GameCountdown {
+export class GameCountdown implements IGameCountdown {
   private currentTime: number;
   private countdownSubscribers: Function[];
   private roundTime: number;
@@ -16,7 +18,7 @@ export class GameCountdown {
     this.countdownSubscribers = [];
   }
 
-  public async startRound() {
+  public async start() {
     this.setCurrentTime(this.roundTime);
 
     const interval = setInterval(() => {
@@ -28,15 +30,11 @@ export class GameCountdown {
     clearInterval(interval);
   }
 
-  public getTime(): number {
-    return this.currentTime;
-  }
-
-  public subscribeCountdown(callback: (currentTime: number) => void): number {
+  public subscribe(callback: (currentTime: number) => void): number {
     return this.countdownSubscribers.push(callback) - 1;
   }
 
-  public unsubscribeCountdown(index: number) {
+  public unsubscribe(index: number) {
     this.countdownSubscribers.splice(index, 1);
   }
 
