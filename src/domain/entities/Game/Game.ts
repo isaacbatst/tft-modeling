@@ -1,8 +1,8 @@
 // import {Character, CharacterAttributes, Sinergy} from './Character';
 // import {Item} from './Item';
 export enum GameErrors {
-  BELLOW_MIN_PLAYERS = 'BELLOW_MIN_PLAYERS',
-  REPEATED_PLAYER = 'REPEATED_PLAYER'
+  INVALID_ROUND_FOR_STAGE = 'INVALID_ROUND_FOR_STAGE',
+  INVALID_STAGE_AFTER_LAST = 'INVALID_STAGE_AFTER_LAST'
 }
 
 // interface Card {
@@ -55,15 +55,35 @@ export interface IGameRoundMoments {
   start(players: IGamePlayersList): Promise<void>
 }
 
+enum GameStage {
+  First = 1,
+  Second = 2,
+  Third = 3,
+  Forth = 4,
+  Fifth = 5,
+  Sixth = 6,
+  Seventh = 7,
+}
+
 export class Game {
   static INITIAL_GOLD = 3;
   static ROUND_PREPARATION_TIME = 3;
   static ROUND_BATTLE_TIME = 5;
   static GOLD_PER_ROUND = 5;
+  static LAST_STAGE = 7;
+  static ROUNDS_PER_STAGE: Record<GameStage, number> = {
+    1: 4,
+    2: 7,
+    3: 7,
+    4: 7,
+    5: 7,
+    6: 7,
+    7: 7,
+  };
 
   private players: IGamePlayersList;
   private deck: GameDeck;
-  private stage: number;
+  private stage: GameStage;
   private round: number;
   private countdown: IGameCountdown;
   private roundMoments: IGameRoundMoments;
@@ -107,16 +127,57 @@ export class Game {
         break;
       }
 
-      this.refillPlayers();
+      this.prepareNextRound();
     }
 
-    return this.players.getAll();
+    return {
+      players: this.players.getAll(),
+      round: this.round,
+      stage: this.stage,
+    };
+  }
+
+  private prepareNextRound() {
+    this.refillPlayers();
+
+    const nextRound = this.getNextRound();
+    this.round = nextRound.round;
+    this.stage = nextRound.stage;
+  }
+
+  private getNextRound(): { round: number, stage: GameStage } {
+    if (this.stage > Game.LAST_STAGE) {
+      throw new Error(GameErrors.INVALID_STAGE_AFTER_LAST);
+    }
+
+    if (this.round > Game.ROUNDS_PER_STAGE[this.stage]) {
+      throw new Error(GameErrors.INVALID_ROUND_FOR_STAGE);
+    }
+
+    if (this.round === Game.ROUNDS_PER_STAGE[this.stage]) {
+      return {
+        round: 1,
+        stage: this.stage + 1,
+      };
+    }
+
+    return {
+      round: this.round + 1,
+      stage: this.stage,
+    };
   }
 
   private checkIfShouldStop(): boolean {
     const players = this.players.getAll();
     const remainingPlayers = players.filter((player) => player.getLife() > 0);
-    return remainingPlayers.length < 2;
+    const isOnlyOnePlayerRemaining = remainingPlayers.length < 2;
+
+    const isLastStage = Game.LAST_STAGE === this.stage;
+    const isLastRound = Game.ROUNDS_PER_STAGE[this.stage] === this.round;
+
+    const isLastStageLastRound = isLastStage && isLastRound;
+
+    return isOnlyOnePlayerRemaining || isLastStageLastRound;
   }
 
   private refillPlayers() {
