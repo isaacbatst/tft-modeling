@@ -27,30 +27,26 @@ export interface DeckForCarousel {
   takeRandomCarouselBoard(): CarouselBoard
 }
 
+export interface CarouselEventsDispatchers {
+  start: (board: CarouselBoard) => void,
+  end: () => void
+}
+
 export class Carousel implements IGameRoundMoment {
   static COUNTDOWN_TIME = 30;
 
   constructor(
     private countdown: IGameCountdown,
+    private dispatch: CarouselEventsDispatchers,
   ) {}
 
   async start(players: IGamePlayersList, deck: DeckForCarousel): Promise<void> {
     const board = deck.takeRandomCarouselBoard();
 
-    console.log(
-        'Starting carousel with',
-        players.getAll().map((player) => player.getId()),
-        board.getAll()
-            .map((character) =>
-              `${character.character.getName()} \
-              with ${character.items[0].getName()}`,
-            ),
-    );
+    this.dispatch.start(board);
 
-    await this.startCountdown();
-  }
+    await this.countdown.start(Carousel.COUNTDOWN_TIME);
 
-  private startCountdown() {
-    return this.countdown.start(Carousel.COUNTDOWN_TIME);
+    this.dispatch.end();
   }
 }

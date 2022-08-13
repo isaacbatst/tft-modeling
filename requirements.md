@@ -18,5 +18,6 @@
 
 #### Carousel
 - Init countdown
-  - Should resolve when countdown ends
-  - Should take random carousel characters
+  - Resolve when countdown ends
+  - Take random carousel characters
+  - Emit event
