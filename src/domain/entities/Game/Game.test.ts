@@ -1,7 +1,6 @@
 import {
-  Game, GameDeck, IGamePlayersList, IGameRoundMoment, IHand,
+  Game, GameDeck, IGameRoundMoments, IHand,
 } from './Game';
-import {GamePlayerMock} from './GamePlayerMock';
 import {GamePlayersListMock} from './GamePlayersListMock';
 
 class DeckMock implements GameDeck {
@@ -10,18 +9,8 @@ class DeckMock implements GameDeck {
   });
 }
 
-class RoundMomentsMock implements IGameRoundMoment {
+class RoundMomentsMock implements IGameRoundMoments {
   start = jest.fn();
-
-  killPlayerOnFirstRound = async (players: IGamePlayersList) => {
-    const [firstPlayer] = players.getAll();
-    firstPlayer.decrementLife(GamePlayerMock.INITIAL_LIFE);
-  };
-
-  killPlayerOnSecondRound = async (players: IGamePlayersList) => {
-    const [firstPlayer] = players.getAll();
-    firstPlayer.decrementLife(GamePlayerMock.INITIAL_LIFE / 2);
-  };
 }
 
 const makeSut = () => {
@@ -67,118 +56,11 @@ describe('Game', () => {
       });
     });
 
-    describe('Given player 1 dies on first round', () => {
-      it('should call round start only once', async () => {
-        const {game, roundMoments} = makeSut();
-        roundMoments.start
-            .mockImplementation(roundMoments.killPlayerOnFirstRound);
+    it('should call roundMoments start', async () => {
+      const {game, roundMoments} = makeSut();
+      await game.start();
 
-
-        await game.start();
-
-        expect(roundMoments.start).toHaveBeenCalledTimes(1);
-      });
-
-      it('should not call players incrementGold', async () => {
-        const {game, roundMoments, playersList} = makeSut();
-        roundMoments.start
-            .mockImplementation(roundMoments.killPlayerOnFirstRound);
-
-
-        await game.start();
-
-        playersList.getAll().forEach((player) => {
-          expect(player.incrementGold).not.toBeCalled();
-        });
-      });
-
-      it('should call players setHand once', async () => {
-        const {game, roundMoments, playersList} = makeSut();
-        roundMoments.start
-            .mockImplementation(roundMoments.killPlayerOnFirstRound);
-
-        await game.start();
-
-        playersList.getAll().forEach((player) => {
-          expect(player.setHand).toHaveBeenCalledTimes(1);
-        });
-      });
-
-      it('should return on stage 1', async () => {
-        const {game, roundMoments} = makeSut();
-        roundMoments.start
-            .mockImplementation(roundMoments.killPlayerOnFirstRound);
-
-        const {stage} = await game.start();
-
-        expect(stage).toBe(1);
-      });
-
-      it('should return on round 1', async () => {
-        const {game, roundMoments} = makeSut();
-        roundMoments.start
-            .mockImplementation(roundMoments.killPlayerOnFirstRound);
-
-        const {round} = await game.start();
-
-        expect(round).toBe(1);
-      });
-    });
-
-    describe('Given player 1 dies on second round', () => {
-      it('should call round start twice', async () => {
-        const {game, roundMoments} = makeSut();
-        roundMoments.start
-            .mockImplementation(roundMoments.killPlayerOnSecondRound);
-
-        await game.start();
-
-        expect(roundMoments.start).toHaveBeenCalledTimes(2);
-      });
-
-      it('should call players incrementGold once', async () => {
-        const {game, roundMoments, playersList} = makeSut();
-        roundMoments.start
-            .mockImplementation(roundMoments.killPlayerOnSecondRound);
-
-        await game.start();
-
-        playersList.getAll().forEach((player) => {
-          expect(player.incrementGold).toHaveBeenCalledTimes(1);
-        });
-      });
-
-      it('should call players setHand twice', async () => {
-        const {game, roundMoments, playersList} = makeSut();
-        roundMoments.start
-            .mockImplementation(roundMoments.killPlayerOnSecondRound);
-
-        await game.start();
-
-        playersList.getAll().forEach((player) => {
-          expect(player.setHand).toHaveBeenCalledTimes(2);
-        });
-      });
-
-      it('should return on stage 1', async () => {
-        const {game, roundMoments} = makeSut();
-        roundMoments.start
-            .mockImplementation(roundMoments.killPlayerOnSecondRound);
-
-        const {stage} = await game.start();
-
-        expect(stage).toBe(1);
-      });
-
-      it('should return on round 2', async () => {
-        const {game, roundMoments} = makeSut();
-        roundMoments.start
-            .mockImplementation(roundMoments.killPlayerOnSecondRound);
-
-        const {round} = await game.start();
-
-        expect(round).toBe(2);
-      });
+      expect(roundMoments.start).toBeCalled();
     });
   });
 });

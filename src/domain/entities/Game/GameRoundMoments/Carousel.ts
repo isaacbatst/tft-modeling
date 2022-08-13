@@ -1,4 +1,5 @@
-import {IGamePlayersList, IGameRoundMoment} from '../Game';
+import {IGamePlayersList} from '../Game';
+import {IGameRoundMoment} from './GameRoundMoments';
 
 
 export interface IGameCountdown {
