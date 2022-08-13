@@ -19,3 +19,4 @@
 #### Carousel
 - Init countdown
   - Should resolve when countdown ends
+  - Should take random carousel characters
