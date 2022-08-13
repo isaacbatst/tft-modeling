@@ -126,17 +126,24 @@ describe('Game', () => {
       });
     });
 
-    it('should call countdown start with ROUND_TIME', () => {
+    it('should call countdown start with ROUND_PREPARATION_TIME', () => {
       const {game, countdown} = makeSut();
-
       game.start();
 
-      expect(countdown.start).toBeCalledWith(Game.ROUND_TIME);
+      expect(countdown.start).toHaveBeenCalledTimes(1);
+      expect(countdown.start).toBeCalledWith(Game.ROUND_PREPARATION_TIME);
     });
 
-    it('should call players refill functions after timeout', async () => {
-      const {game, players} = makeSut();
+    it('should call countdown start with ROUND_BATTLE_TIME', async () => {
+      const {game, countdown} = makeSut();
+      await game.start();
 
+      expect(countdown.start).toHaveBeenCalledTimes(2);
+      expect(countdown.start).toBeCalledWith(Game.ROUND_BATTLE_TIME);
+    });
+
+    it('should call players refill functions after battle time', async () => {
+      const {game, players} = makeSut();
       const promise = game.start();
 
       players.forEach((player) => {

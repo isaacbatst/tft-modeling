@@ -48,7 +48,8 @@ export interface IGameCountdown {
 
 export class Game {
   static INITIAL_GOLD = 3;
-  static ROUND_TIME = 3;
+  static ROUND_PREPARATION_TIME = 3;
+  static ROUND_BATTLE_TIME = 5;
   static GOLD_PER_ROUND = 5;
 
   private players: GamePlayersList;
@@ -87,7 +88,8 @@ export class Game {
   private async startRounds() {
     this.countdown.subscribe((time) => console.log(time));
 
-    await this.countdown.start(Game.ROUND_TIME);
+    await this.countdown.start(Game.ROUND_PREPARATION_TIME);
+    await this.countdown.start(Game.ROUND_BATTLE_TIME);
     this.refillPlayers();
   }
 

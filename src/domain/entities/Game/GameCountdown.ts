@@ -7,17 +7,17 @@ enum GameCountdownErrors {
 
 export class GameCountdown implements IGameCountdown {
   private currentTime: number;
-  private countdownSubscribers: Function[];
-  private roundTime: number = 0;
+  private subscribers: Function[];
+  private completeTime: number = 0;
 
   constructor() {
     this.currentTime = 0;
-    this.countdownSubscribers = [];
+    this.subscribers = [];
   }
 
-  public async start(roundTime: number) {
-    this.setRoundTime(roundTime);
-    this.setCurrentTime(this.roundTime);
+  public async start(completeTime: number) {
+    this.setCompleteTime(completeTime);
+    this.setCurrentTime(this.completeTime);
 
     const interval = setInterval(() => {
       this.setCurrentTime(this.currentTime - 1);
@@ -29,11 +29,11 @@ export class GameCountdown implements IGameCountdown {
   }
 
   public subscribe(callback: (currentTime: number) => void): number {
-    return this.countdownSubscribers.push(callback) - 1;
+    return this.subscribers.push(callback) - 1;
   }
 
   public unsubscribe(index: number) {
-    this.countdownSubscribers.splice(index, 1);
+    this.subscribers.splice(index, 1);
   }
 
   private setCurrentTime(value: number) {
@@ -49,20 +49,20 @@ export class GameCountdown implements IGameCountdown {
     return new Promise<void>((resolve) => {
       setTimeout(() => {
         resolve();
-      }, this.roundTime * 1000);
+      }, this.completeTime * 1000);
     });
   }
 
   private dispatchCountdownChange() {
-    this.countdownSubscribers
+    this.subscribers
         .forEach((callback) => callback(this.currentTime));
   }
 
-  private setRoundTime(value: number) {
+  private setCompleteTime(value: number) {
     if (value <= 0) {
       throw new Error(GameCountdownErrors.MIN_ROUND_TIME_VALUE);
     }
 
-    this.roundTime = value;
+    this.completeTime = value;
   }
 }
