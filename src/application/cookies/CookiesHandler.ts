@@ -1,10 +1,14 @@
-import cookie from 'cookie';
+import cookie, {CookieParseOptions} from 'cookie';
 import {NextApiRequest} from 'next';
 import {randomUUID} from 'node:crypto';
 import {NextApiResponseServerIO} from '../socket/SocketServer';
 
 export class CookiesHandler {
   static COOKIE_NAME = 'X-TFT-Cookie';
+
+  static parse(str: string, options?: CookieParseOptions) {
+    return cookie.parse(str, options);
+  }
 
   static findOrCreateCookie(
       req: NextApiRequest, res: NextApiResponseServerIO,
