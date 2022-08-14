@@ -31,6 +31,7 @@ export class GameSocketServerFactory {
     >(httpServer);
 
     res.socket.server.io = io;
+
     return io;
   }
 }

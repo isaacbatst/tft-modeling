@@ -19,6 +19,7 @@ import {
 import {
   SocketIOPlayersListDispatcher,
 } from '../socket/adapters/PlayersListEventDispatcherAdapter';
+import {GameSocket} from '../socket/interfaces';
 import {
   GameSocketIoServer,
   NextApiResponseServerIO,
@@ -99,7 +100,15 @@ export class GameFactory {
     GameFactory.socketServer.on('connection', GameFactory.handleConnection);
   }
 
-  private static handleConnection() {
+  private static handleConnection(socket: GameSocket) {
+    socket.on('disconnect', () => {
+      const cookies = socket.request.headers.cookie;
+      const parsed = CookiesHandler.parse(cookies || '');
+      const {socketServer} = GameFactory;
 
+      if (parsed[CookiesHandler.COOKIE_NAME] && socketServer) {
+        socketServer.emit('playerAdded', []);
+      }
+    });
   }
 }
