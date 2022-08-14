@@ -17,8 +17,8 @@ import {
   SocketIOCarouselEventsDispatcher,
 } from '../socket/adapters/CarouselEventsDispatcherAdapter';
 import {
-  SocketIOGameEventsDispatcher,
-} from '../socket/adapters/GameEventDispatcherAdapter';
+  SocketIOPlayersListDispatcher,
+} from '../socket/adapters/PlayersListEventDispatcherAdapter';
 import {
   GameSocketIoServer,
   NextApiResponseServerIO,
@@ -69,10 +69,12 @@ export class GameFactory {
     );
     const roundsManager = new RoundsManager(momentsList);
     const deck = new GameDeck();
-    const playersList = new GamePlayersList([]);
-    const gameEventDispatchers = new SocketIOGameEventsDispatcher(socketServer);
+    const playersListDispatcher = new SocketIOPlayersListDispatcher(
+        socketServer,
+    );
+    const playersList = new GamePlayersList([], playersListDispatcher);
     const game = new Game(
-        deck, playersList, roundsManager, gameEventDispatchers);
+        deck, playersList, roundsManager);
 
     GameFactory.game = game;
 

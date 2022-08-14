@@ -57,10 +57,6 @@ export interface IRoundsManager {
   ): Promise<void>,
 }
 
-export interface GameEventDispatchers {
-  playerAdded(players: GamePlayerDTO[]): void
-}
-
 export interface GamePlayerDTO {
   id: string,
   life: number,
@@ -75,9 +71,7 @@ export class Game {
       private deck: IGameDeck,
       private players: IGamePlayersList,
       private roundsManager: IRoundsManager,
-      private dispatch: GameEventDispatchers,
-  ) {
-  }
+  ) {}
 
   public handlePlayerConnected(id: string) {
     const sameId = this.players.getAll().find((player) => {
@@ -87,8 +81,6 @@ export class Game {
     if (!sameId) {
       const player = new GamePlayer(id);
       this.players.addPlayer(player);
-      const players = this.players.getAll().map(this.toDTO);
-      this.dispatch.playerAdded(players);
     }
   }
 

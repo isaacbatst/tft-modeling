@@ -1,16 +1,20 @@
-import {IGamePlayer, IGamePlayersList, PlayerCouple} from './Game';
+import {GamePlayerDTO
+  , IGamePlayer, IGamePlayersList, PlayerCouple} from './Game';
 
 export enum GamePlayersListErrors {
   BELLOW_MIN_PLAYERS = 'BELLOW_MIN_PLAYERS',
   REPEATED_PLAYER = 'REPEATED_PLAYER'
 }
 
-export class GamePlayersList implements IGamePlayersList {
-  private players: IGamePlayer[];
+export interface PlayersListEventDispatcher {
+  playerAdded(players: GamePlayerDTO[]): void
+}
 
-  constructor(players: IGamePlayer[]) {
-    this.players = players;
-  }
+export class GamePlayersList implements IGamePlayersList {
+  constructor(
+      private players: IGamePlayer[],
+      private dispatch: PlayersListEventDispatcher,
+  ) {}
 
   getAll() {
     return this.players;
@@ -18,6 +22,7 @@ export class GamePlayersList implements IGamePlayersList {
 
   addPlayer(player: IGamePlayer) {
     this.players.push(player);
+    this.dispatch.playerAdded(this.players.map(this.toDTO));
   }
 
   public validatePlayers(): void {
@@ -59,5 +64,13 @@ export class GamePlayersList implements IGamePlayersList {
     }
 
     return couples;
+  }
+
+  private toDTO(player: IGamePlayer): GamePlayerDTO {
+    return {
+      gold: player.getGold(),
+      id: player.getId(),
+      life: player.getLife(),
+    };
   }
 }

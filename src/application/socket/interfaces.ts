@@ -1,11 +1,13 @@
-import {GameEventDispatchers} from '../../domain/entities/Game/Game';
+import {
+  PlayersListEventDispatcher,
+} from '../../domain/entities/Game/GamePlayersList';
 import {
   CarouselEventsDispatchers,
 } from '../../domain/entities/Game/RoundsManager/Carousel';
 
 export interface ServerToClientEvents extends
   CarouselEventsDispatchers,
-  GameEventDispatchers {
+  PlayersListEventDispatcher {
 }
 
 export interface ClientToServerEvents {
