@@ -28,8 +28,9 @@ export class GameCountdown implements IGameCountdown {
     clearInterval(interval);
   }
 
-  public subscribe(callback: (currentTime: number) => void): number {
-    return this.subscribers.push(callback) - 1;
+  public subscribe(callback: (currentTime: number) => void): () => void {
+    const indexToRemove = this.subscribers.push(callback) - 1;
+    return () => this.unsubscribe(indexToRemove);
   }
 
   public unsubscribe(index: number) {

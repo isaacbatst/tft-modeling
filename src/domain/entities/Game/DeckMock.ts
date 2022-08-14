@@ -1,6 +1,6 @@
-import {GameDeck, IHand} from './Game';
+import {IGameDeck, IHand} from './Game';
 
-export class DeckMock implements GameDeck {
+export class DeckMock implements IGameDeck {
   takeRandomHand = jest.fn((): IHand[] => {
     return [];
   });

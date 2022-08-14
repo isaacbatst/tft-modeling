@@ -1,8 +1,8 @@
-import {GameDeck, IGamePlayersList, IRoundsManager} from '../Game';
+import {IGameDeck, IGamePlayersList, IRoundsManager} from '../Game';
 
 
 export interface IGameRoundMoment {
-  start(players: IGamePlayersList, deck: GameDeck): Promise<void>
+  start(players: IGamePlayersList, deck: IGameDeck): Promise<void>
 }
 export interface IGameRoundMomentsList {
   getAll(): IGameRoundMoment[],
@@ -27,7 +27,7 @@ export class RoundsManager implements IRoundsManager {
   async start(
       players: IGamePlayersList,
       goldPerRound: number,
-      deck: GameDeck,
+      deck: IGameDeck,
   ):
       Promise<void> {
     this.stage = 1;
@@ -50,7 +50,7 @@ export class RoundsManager implements IRoundsManager {
   private setNextRound(
       players: IGamePlayersList,
       goldPerRound: number,
-      deck: GameDeck,
+      deck: IGameDeck,
   ) {
     this.refillPlayers(players, goldPerRound, deck);
 
@@ -62,7 +62,7 @@ export class RoundsManager implements IRoundsManager {
   private refillPlayers(
       players: IGamePlayersList,
       goldPerRound: number,
-      deck: GameDeck,
+      deck: IGameDeck,
   ) {
     players.getAll().forEach((player) => {
       player.incrementGold(goldPerRound);

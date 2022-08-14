@@ -1,8 +1,8 @@
-import {IGamePlayersList} from '../Game';
+import {IGameDeck, IGamePlayersList} from '../Game';
 import {IGameRoundMomentsList} from './RoundsManager';
 
 export interface IGameRoundMoment {
-  start(players: IGamePlayersList): Promise<void>
+  start(players: IGamePlayersList, deck: IGameDeck): Promise<void>
 }
 
 enum GameRoundMomentsErrors {

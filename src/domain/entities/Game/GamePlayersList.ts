@@ -9,7 +9,6 @@ export class GamePlayersList implements IGamePlayersList {
   private players: IGamePlayer[];
 
   constructor(players: IGamePlayer[]) {
-    this.validatePlayers(players);
     this.players = players;
   }
 
@@ -17,14 +16,18 @@ export class GamePlayersList implements IGamePlayersList {
     return this.players;
   }
 
-  private validatePlayers(players: IGamePlayer[]) {
-    if (players.length < 2) {
+  addPlayer(player: IGamePlayer) {
+    this.players.push(player);
+  }
+
+  public validatePlayers(): void {
+    if (this.players.length < 2) {
       throw new Error(GamePlayersListErrors.BELLOW_MIN_PLAYERS);
     }
 
-    const hasRepeatedId = players
+    const hasRepeatedId = this.players
         .some((iPlayer, index) => {
-          const foundIndex = players
+          const foundIndex = this.players
               .findIndex((jPlayer) => jPlayer.getId() === iPlayer.getId());
           return foundIndex !== index;
         });

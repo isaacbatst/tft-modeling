@@ -1,18 +1,18 @@
 import {CountdownMock} from './GameCountdownMock';
 import {
   Carousel,
-  CarouselBoard,
+  ICarouselBoard,
   CarouselEventsDispatchers,
   DeckForCarousel, ICharacterInGame} from './Carousel';
 import {GamePlayersListMock} from '../GamePlayersListMock';
 
 class DeckMock implements DeckForCarousel {
-  takeRandomCarouselBoard = jest.fn((): CarouselBoard => {
+  takeRandomCarouselBoard = jest.fn((): ICarouselBoard => {
     return {
       getAll(): ICharacterInGame[] {
         return [
           {
-            character: {
+            getCharacter(): {
               getName() {
                 return 'character-1';
               },
@@ -32,8 +32,8 @@ class DeckMock implements DeckForCarousel {
 }
 
 class DispatchMock implements CarouselEventsDispatchers {
-  start: (board: CarouselBoard) => void = jest.fn();
-  end = jest.fn();
+  carouselStart: (board: ICarouselBoard) => void = jest.fn();
+  carouselEnd = jest.fn();
   releasePlayers = jest.fn();
 }
 
@@ -70,7 +70,7 @@ describe('Carousel', () => {
       const {carousel, players, dispatch, deck} = makeSut();
       carousel.start(players, deck);
 
-      expect(dispatch.start).toBeCalled();
+      expect(dispatch.carouselStart).toBeCalled();
     });
 
     it('should not dispatch end event', async () => {
@@ -78,7 +78,7 @@ describe('Carousel', () => {
 
       carousel.start(players, deck);
 
-      expect(dispatch.end).not.toBeCalled();
+      expect(dispatch.carouselEnd).not.toBeCalled();
     });
 
     it('should dispatch release player event once', async () => {
@@ -103,7 +103,7 @@ describe('Carousel', () => {
 
         await carousel.start(players, deck);
 
-        expect(dispatch.end).toBeCalled();
+        expect(dispatch.carouselEnd).toBeCalled();
       });
     });
   });

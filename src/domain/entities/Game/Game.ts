@@ -1,6 +1,7 @@
 // import {Character, CharacterAttributes, Sinergy} from './Character';
 // import {Item} from './Item';
 
+import {GamePlayer} from './GamePlayer';
 import {DeckForCarousel,
   PlayersListForCarousel} from './RoundsManager/Carousel';
 
@@ -25,13 +26,14 @@ import {DeckForCarousel,
 // }
 
 export interface IHand {}
-export interface GameDeck extends DeckForCarousel {
+export interface IGameDeck extends DeckForCarousel {
   takeRandomHand(): IHand[];
 }
 
 export interface IGamePlayer {
   getId(): string
   getLife(): number
+  getGold(): number
   decrementLife(value: number): void
   incrementGold(value: number): void
   setGold(value: number): void
@@ -43,14 +45,26 @@ export type PlayerCouple = [IGamePlayer, IGamePlayer];
 export interface IGamePlayersList extends PlayersListForCarousel {
   getAll(): IGamePlayer[];
   makeBattleCouples(): PlayerCouple[]
+  validatePlayers(): void;
+  addPlayer(player: IGamePlayer): void;
 }
 
 export interface IRoundsManager {
   start(
     players: IGamePlayersList,
     goldPerRound: number,
-    deck: GameDeck
+    deck: IGameDeck
   ): Promise<void>,
+}
+
+export interface GameEventDispatchers {
+  playerAdded(players: GamePlayerDTO[]): void
+}
+
+export interface GamePlayerDTO {
+  id: string,
+  life: number,
+  gold: number,
 }
 
 export class Game {
@@ -58,13 +72,36 @@ export class Game {
   private static GOLD_PER_ROUND = 5;
 
   constructor(
-      private deck: GameDeck,
+      private deck: IGameDeck,
       private players: IGamePlayersList,
       private roundsManager: IRoundsManager,
+      private dispatch: GameEventDispatchers,
   ) {
   }
 
+  public addPlayer(id: string) {
+    const sameId = this.players.getAll().find((player) => {
+      return player.getId() === id;
+    });
+
+    if (!sameId) {
+      const player = new GamePlayer(id);
+      this.players.addPlayer(player);
+      const players = this.players.getAll().map(this.toDTO);
+      this.dispatch.playerAdded(players);
+    }
+  }
+
+  private toDTO(player: IGamePlayer): GamePlayerDTO {
+    return {
+      gold: player.getGold(),
+      id: player.getId(),
+      life: player.getLife(),
+    };
+  }
+
   public async start() {
+    this.players.validatePlayers();
     this.setupPlayers();
 
     await this.roundsManager
@@ -74,7 +111,6 @@ export class Game {
       players: this.players.getAll(),
     };
   }
-
 
   private setupPlayers() {
     this.players.getAll().forEach((player) => {
