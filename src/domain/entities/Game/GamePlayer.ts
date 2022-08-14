@@ -5,12 +5,14 @@ export class GamePlayer implements IGamePlayer {
   private life: number;
   private gold: number;
   private hand: IHand[];
+  private connected: boolean;
 
   constructor(id: string) {
     this.id = id;
     this.life = 100;
     this.gold = 0;
     this.hand = [];
+    this.connected = true;
   }
 
   getId(): string {
@@ -21,6 +23,10 @@ export class GamePlayer implements IGamePlayer {
   }
   getGold(): number {
     return this.gold;
+  }
+
+  getConnected(): boolean {
+    return this.connected;
   }
 
   decrementLife(value: number): void {

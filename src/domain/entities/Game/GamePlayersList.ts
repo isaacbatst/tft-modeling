@@ -1,5 +1,6 @@
 import {GamePlayerDTO
   , IGamePlayer, IGamePlayersList, PlayerCouple} from './Game';
+import {GamePlayer} from './GamePlayer';
 
 export enum GamePlayersListErrors {
   BELLOW_MIN_PLAYERS = 'BELLOW_MIN_PLAYERS',
@@ -20,9 +21,20 @@ export class GamePlayersList implements IGamePlayersList {
     return this.players;
   }
 
-  addPlayer(player: IGamePlayer) {
-    this.players.push(player);
-    this.dispatch.playerAdded(this.players.map(this.toDTO));
+  public getDTOList() {
+    return this.players.map(this.toDTO);
+  }
+
+  public addPlayer(id: string) {
+    const sameId = this.players.find((player) => {
+      return player.getId() === id;
+    });
+
+    if (!sameId) {
+      const player = new GamePlayer(id);
+      this.players.push(player);
+      this.dispatch.playerAdded(this.players.map(this.toDTO));
+    }
   }
 
   public validatePlayers(): void {
@@ -71,6 +83,7 @@ export class GamePlayersList implements IGamePlayersList {
       gold: player.getGold(),
       id: player.getId(),
       life: player.getLife(),
+      connected: player.getConnected(),
     };
   }
 }

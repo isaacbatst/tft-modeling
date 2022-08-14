@@ -1,4 +1,6 @@
-import {IGamePlayer, IGamePlayersList, PlayerCouple} from './Game';
+import {
+  GamePlayerDTO, IGamePlayer, IGamePlayersList, PlayerCouple,
+} from './Game';
 import {GamePlayerMock} from './GamePlayerMock';
 
 export class GamePlayersListMock implements IGamePlayersList {
@@ -28,5 +30,14 @@ export class GamePlayersListMock implements IGamePlayersList {
     return [
       [player1, player2],
     ];
+  }
+
+  getDTOList(): GamePlayerDTO[] {
+    return this.players.map<GamePlayerDTO>((player) => ({
+      connected: player.getConnected(),
+      gold: player.getGold(),
+      id: player.getId(),
+      life: player.getLife(),
+    }));
   }
 }

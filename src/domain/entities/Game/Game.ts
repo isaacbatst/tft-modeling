@@ -1,9 +1,10 @@
 // import {Character, CharacterAttributes, Sinergy} from './Character';
 // import {Item} from './Item';
 
-import {GamePlayer} from './GamePlayer';
-import {DeckForCarousel,
-  PlayersListForCarousel} from './RoundsManager/Carousel';
+import {
+  DeckForCarousel,
+  PlayersListForCarousel,
+} from './RoundsManager/Carousel';
 
 // interface Card {
 
@@ -38,6 +39,7 @@ export interface IGamePlayer {
   incrementGold(value: number): void
   setGold(value: number): void
   setHand(characters: IHand[]): void
+  getConnected(): boolean
 }
 
 export type PlayerCouple = [IGamePlayer, IGamePlayer];
@@ -46,7 +48,8 @@ export interface IGamePlayersList extends PlayersListForCarousel {
   getAll(): IGamePlayer[];
   makeBattleCouples(): PlayerCouple[]
   validatePlayers(): void;
-  addPlayer(player: IGamePlayer): void;
+  addPlayer(id: string): void;
+  getDTOList(): GamePlayerDTO[]
 }
 
 export interface IRoundsManager {
@@ -61,6 +64,7 @@ export interface GamePlayerDTO {
   id: string,
   life: number,
   gold: number,
+  connected: boolean,
 }
 
 export class Game {
@@ -74,22 +78,7 @@ export class Game {
   ) {}
 
   public handlePlayerConnected(id: string) {
-    const sameId = this.players.getAll().find((player) => {
-      return player.getId() === id;
-    });
-
-    if (!sameId) {
-      const player = new GamePlayer(id);
-      this.players.addPlayer(player);
-    }
-  }
-
-  private toDTO(player: IGamePlayer): GamePlayerDTO {
-    return {
-      gold: player.getGold(),
-      id: player.getId(),
-      life: player.getLife(),
-    };
+    this.players.addPlayer(id);
   }
 
   public async start() {
@@ -105,7 +94,7 @@ export class Game {
   }
 
   public getPlayers() {
-    return this.players.getAll().map(this.toDTO);
+    return this.players.getDTOList();
   }
 
   private setupPlayers() {

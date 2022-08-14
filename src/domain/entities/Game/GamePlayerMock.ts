@@ -17,4 +17,5 @@ export class GamePlayerMock implements IGamePlayer {
   incrementGold = jest.fn();
   getLife = jest.fn(() => this.life);
   decrementLife = jest.fn((value: number) => this.life -= value);
+  getConnected = jest.fn();
 }
