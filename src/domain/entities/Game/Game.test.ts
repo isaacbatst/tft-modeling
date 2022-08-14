@@ -24,32 +24,12 @@ const makeSut = () => {
 
 describe('Game', () => {
   describe('On start', () => {
-    it('should call deck takeRandomHand for each player', () => {
-      const {game, deck, playersList} = makeSut();
-
-      game.start();
-
-      expect(deck.takeRandomHand).toBeCalledTimes(playersList.getAll().length);
-    });
-
-    it('should call each player setHand with takeRandomHand return', () => {
+    it('should call playersList setup', () => {
       const {game, playersList} = makeSut();
 
       game.start();
 
-      playersList.getAll().forEach((player) => {
-        expect(player.setHand).toBeCalled();
-      });
-    });
-
-    it('should call each player setGold with 3', () => {
-      const {game, playersList} = makeSut();
-
-      game.start();
-
-      playersList.getAll().forEach((player) => {
-        expect(player.setGold).toBeCalledWith(3);
-      });
+      expect(playersList.setupPlayers).toBeCalled();
     });
 
     it('should call roundMoments start', async () => {

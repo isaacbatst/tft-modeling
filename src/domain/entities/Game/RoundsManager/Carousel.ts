@@ -1,6 +1,5 @@
-import {PlayerCouple} from '../Game';
+import {PlayerCoupleDTO} from '../GamePlayersList';
 import {IGameRoundMoment} from './RoundsManager';
-
 
 export interface IGameCountdown {
   subscribe(callback: (time: number) => void): () => void;
@@ -27,7 +26,7 @@ export interface DeckForCarousel {
 }
 
 export interface PlayersListForCarousel {
-  makeCarouselCouples(): PlayerCouple[]
+  makeCarouselCouples(): PlayerCoupleDTO[]
 }
 
 export interface CarouselEventsDispatchers {

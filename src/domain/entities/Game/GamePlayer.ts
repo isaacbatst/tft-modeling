@@ -1,4 +1,5 @@
-import {IGamePlayer, IHand} from './Game';
+import {IHand} from './Game';
+import {IGamePlayer} from './GamePlayersList';
 
 export class GamePlayer implements IGamePlayer {
   private id: string;
@@ -27,6 +28,10 @@ export class GamePlayer implements IGamePlayer {
 
   getConnected(): boolean {
     return this.connected;
+  }
+
+  setConnected(connected: boolean): void {
+    this.connected = connected;
   }
 
   decrementLife(value: number): void {

@@ -105,9 +105,12 @@ export class GameFactory {
       const cookies = socket.request.headers.cookie;
       const parsed = CookiesHandler.parse(cookies || '');
       const {socketServer} = GameFactory;
+      const {game} = GameFactory;
+      const id = parsed[CookiesHandler.COOKIE_NAME];
 
-      if (parsed[CookiesHandler.COOKIE_NAME] && socketServer) {
-        socketServer.emit('playerAdded', []);
+      if (id && socketServer && game) {
+        game.handlePlayerDisconnected(id);
+        socketServer.emit('playerDisconnected', game.getPlayers());
       }
     });
   }

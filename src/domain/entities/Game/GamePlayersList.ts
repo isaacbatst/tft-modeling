@@ -1,5 +1,5 @@
 import {GamePlayerDTO
-  , IGamePlayer, IGamePlayersList, PlayerCouple} from './Game';
+  , IGamePlayersList, IHand} from './Game';
 import {GamePlayer} from './GamePlayer';
 
 export enum GamePlayersListErrors {
@@ -8,8 +8,26 @@ export enum GamePlayersListErrors {
 }
 
 export interface PlayersListEventDispatcher {
-  playerAdded(players: GamePlayerDTO[]): void
+  playerAdded(players: GamePlayerDTO[]): void,
+  playerDisconnected(players: GamePlayerDTO[]): void
+  playerReconnected(players: GamePlayerDTO[]): void
 }
+
+export interface IGamePlayer {
+  getId(): string
+  getLife(): number
+  getGold(): number
+  decrementLife(value: number): void
+  incrementGold(value: number): void
+  setGold(value: number): void
+  setHand(characters: IHand): void
+  getConnected(): boolean
+  setConnected(connected: boolean): void
+}
+
+export type PlayerCouple = [IGamePlayer, IGamePlayer];
+
+export type PlayerCoupleDTO = [GamePlayerDTO, GamePlayerDTO];
 
 export class GamePlayersList implements IGamePlayersList {
   constructor(
@@ -17,7 +35,7 @@ export class GamePlayersList implements IGamePlayersList {
       private dispatch: PlayersListEventDispatcher,
   ) {}
 
-  getAll() {
+  public getAll() {
     return this.players;
   }
 
@@ -25,16 +43,28 @@ export class GamePlayersList implements IGamePlayersList {
     return this.players.map(this.toDTO);
   }
 
-  public addPlayer(id: string) {
-    const sameId = this.players.find((player) => {
+  public addPlayer(id: string): void {
+    const player = this.players.find((player) => {
       return player.getId() === id;
     });
 
-    if (!sameId) {
+    if (!player) {
       const player = new GamePlayer(id);
       this.players.push(player);
-      this.dispatch.playerAdded(this.players.map(this.toDTO));
+      this.dispatch.playerAdded(this.getDTOList());
+    } else {
+      player.setConnected(true);
+      this.dispatch.playerReconnected(this.getDTOList());
     }
+  }
+
+  public setupPlayers(
+      setup: { gold: number; getRandomHand: () => IHand; },
+  ): void {
+    this.players.forEach((player) => {
+      player.setGold(setup.gold);
+      player.setHand(setup.getRandomHand());
+    });
   }
 
   public validatePlayers(): void {
@@ -54,16 +84,24 @@ export class GamePlayersList implements IGamePlayersList {
     }
   }
 
-  makeBattleCouples(): PlayerCouple[] {
+  disconnectPlayer(id: string): void {
+    const player =this.players.find((player) => player.getId() === id);
+    if (player) {
+      player.setConnected(false);
+      this.dispatch.playerDisconnected(this.players.map(this.toDTO));
+    }
+  }
+
+  makeBattleCouples(): PlayerCoupleDTO[] {
     throw new Error('Not Implemented');
   }
 
-  makeCarouselCouples(): PlayerCouple[] {
+  makeCarouselCouples(): PlayerCoupleDTO[] {
     const playersSortedByLife = this.players.slice().sort((a, b) => {
       return a.getLife() - b.getLife();
     });
 
-    const couples: PlayerCouple[] = [];
+    const couples: PlayerCoupleDTO[] = [];
 
     for (let index = 0; index < playersSortedByLife.length; index += 2) {
       const player = playersSortedByLife[index];
@@ -71,7 +109,7 @@ export class GamePlayersList implements IGamePlayersList {
 
       // TODO should handle "player shadow" strategy
       if (nextPlayer) {
-        couples.push([player, nextPlayer]);
+        couples.push([this.toDTO(player), this.toDTO(nextPlayer)]);
       }
     }
 

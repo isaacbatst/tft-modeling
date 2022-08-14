@@ -1,43 +1,47 @@
 import {
-  GamePlayerDTO, IGamePlayer, IGamePlayersList, PlayerCouple,
+  GamePlayerDTO, IGamePlayersList,
 } from './Game';
-import {GamePlayerMock} from './GamePlayerMock';
+import {PlayerCoupleDTO} from './GamePlayersList';
 
 export class GamePlayersListMock implements IGamePlayersList {
-  private players: IGamePlayer[] = [
-    new GamePlayerMock('any-id-1'),
-    new GamePlayerMock('any-id-2'),
-  ];
+  private player1DTO: GamePlayerDTO = {
+    id: 'any-id-1',
+    connected: true,
+    gold: 100,
+    life: 100,
+  };
 
-  public addPlayer = jest.fn((): void => {
+  private player2DTO: GamePlayerDTO = {
+    id: 'any-id-2',
+    connected: true,
+    gold: 100,
+    life: 100,
+  };
 
-  });
+  public addPlayer = jest.fn();
 
-  public validatePlayers = jest.fn((): void => {
+  public validatePlayers = jest.fn();
 
-  });
-
-  makeBattleCouples = jest.fn((): PlayerCouple[] => {
+  makeBattleCouples = jest.fn((): PlayerCoupleDTO[] => {
     return [];
   });
 
-  getAll(): IGamePlayer[] {
-    return this.players;
-  }
-
-  makeCarouselCouples(): PlayerCouple[] {
-    const [player1, player2] = this.players;
+  makeCarouselCouples(): PlayerCoupleDTO[] {
     return [
-      [player1, player2],
+      [
+        this.player1DTO,
+        this.player2DTO,
+      ],
     ];
   }
 
   getDTOList(): GamePlayerDTO[] {
-    return this.players.map<GamePlayerDTO>((player) => ({
-      connected: player.getConnected(),
-      gold: player.getGold(),
-      id: player.getId(),
-      life: player.getLife(),
-    }));
+    return [
+      this.player1DTO,
+      this.player2DTO,
+    ];
   }
+
+  setupPlayers = jest.fn();
+  disconnectPlayer = jest.fn();
 }

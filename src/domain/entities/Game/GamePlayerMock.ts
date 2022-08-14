@@ -1,4 +1,4 @@
-import {IGamePlayer} from './Game';
+import {IGamePlayer} from './GamePlayersList';
 
 export class GamePlayerMock implements IGamePlayer {
   static INITIAL_LIFE = 100;
@@ -18,4 +18,5 @@ export class GamePlayerMock implements IGamePlayer {
   getLife = jest.fn(() => this.life);
   decrementLife = jest.fn((value: number) => this.life -= value);
   getConnected = jest.fn();
+  setConnected = jest.fn();
 }

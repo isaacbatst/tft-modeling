@@ -6,6 +6,7 @@ import {
 
 class DispatchMock implements PlayersListEventDispatcher {
   playerAdded = jest.fn();
+  playerDisconnected = jest.fn();
 }
 
 describe('GamePlayersList', () => {

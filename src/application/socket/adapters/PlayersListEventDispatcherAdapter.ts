@@ -8,9 +8,17 @@ import {GameSocketIoServer} from '../SocketServer';
 
 export class SocketIOPlayersListDispatcher implements
   PlayersListEventDispatcher {
-  constructor(private socket: GameSocketIoServer) {}
+  constructor(private socketServer: GameSocketIoServer) {}
 
   playerAdded(players: GamePlayerDTO[]): void {
-    this.socket.emit('playerAdded', players);
+    this.socketServer.emit('playerAdded', players);
+  }
+
+  playerDisconnected(players: GamePlayerDTO[]): void {
+    this.socketServer.emit('playerDisconnected', players);
+  }
+
+  playerReconnected(players: GamePlayerDTO[]): void {
+    this.socketServer.emit('playerReconnected', players);
   }
 }

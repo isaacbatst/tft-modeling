@@ -1,6 +1,7 @@
 // import {Character, CharacterAttributes, Sinergy} from './Character';
 // import {Item} from './Item';
 
+import {PlayerCoupleDTO} from './GamePlayersList';
 import {
   DeckForCarousel,
   PlayersListForCarousel,
@@ -31,25 +32,16 @@ export interface IGameDeck extends DeckForCarousel {
   takeRandomHand(): IHand[];
 }
 
-export interface IGamePlayer {
-  getId(): string
-  getLife(): number
-  getGold(): number
-  decrementLife(value: number): void
-  incrementGold(value: number): void
-  setGold(value: number): void
-  setHand(characters: IHand[]): void
-  getConnected(): boolean
-}
-
-export type PlayerCouple = [IGamePlayer, IGamePlayer];
-
 export interface IGamePlayersList extends PlayersListForCarousel {
-  getAll(): IGamePlayer[];
-  makeBattleCouples(): PlayerCouple[]
+  makeBattleCouples(): PlayerCoupleDTO[]
   validatePlayers(): void;
   addPlayer(id: string): void;
-  getDTOList(): GamePlayerDTO[]
+  disconnectPlayer(id: string): void
+  getDTOList(): GamePlayerDTO[];
+  setupPlayers(setup: {
+    gold: number,
+    getRandomHand: () => IHand,
+  }): void
 }
 
 export interface IRoundsManager {
@@ -81,6 +73,10 @@ export class Game {
     this.players.addPlayer(id);
   }
 
+  public handlePlayerDisconnected(id: string) {
+    this.players.disconnectPlayer(id);
+  }
+
   public async start() {
     this.players.validatePlayers();
     this.setupPlayers();
@@ -98,11 +94,9 @@ export class Game {
   }
 
   private setupPlayers() {
-    this.players.getAll().forEach((player) => {
-      const hand = this.deck.takeRandomHand();
-
-      player.setHand(hand);
-      player.setGold(Game.INITIAL_GOLD);
+    this.players.setupPlayers({
+      gold: Game.INITIAL_GOLD,
+      getRandomHand: () => this.deck.takeRandomHand(),
     });
   }
 }

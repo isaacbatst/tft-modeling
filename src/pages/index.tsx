@@ -41,6 +41,16 @@ const HomePage: NextPage = () => {
       console.log('player added on client');
       setPlayersList(playersList);
     });
+
+    socket.on('playerDisconnected', (playersList) => {
+      console.log('player disconnected on client');
+      setPlayersList(playersList);
+    });
+
+    socket.on('playerReconnected', (playersList) => {
+      console.log('player disconnected on client');
+      setPlayersList(playersList);
+    });
   }, []);
 
   return <div>
