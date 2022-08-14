@@ -7,6 +7,14 @@ export class GamePlayersListMock implements IGamePlayersList {
     new GamePlayerMock('any-id-2'),
   ];
 
+  public addPlayer = jest.fn((): void => {
+
+  });
+
+  public validatePlayers = jest.fn((): void => {
+
+  });
+
   makeBattleCouples = jest.fn((): PlayerCouple[] => {
     return [];
   });
