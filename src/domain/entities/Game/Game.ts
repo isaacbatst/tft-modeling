@@ -84,8 +84,6 @@ export class Game {
       return player.getId() === id;
     });
 
-    console.log('just connected', id);
-
     if (!sameId) {
       const player = new GamePlayer(id);
       this.players.addPlayer(player);
