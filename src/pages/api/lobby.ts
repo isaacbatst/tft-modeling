@@ -3,14 +3,14 @@ import {GameFactory} from '../../application/factories/GameFactory';
 import {NextApiResponseServerIO} from '../../application/socket/SocketServer';
 import {GamePlayerDTO} from '../../domain/entities/Game/Game';
 
-export interface StartResponse {
+export interface LobbyResponse {
   game: {
     players: GamePlayerDTO[]
   }
 }
 
 const handler = (req: NextApiRequest,
-    res: NextApiResponseServerIO<StartResponse>) => {
+    res: NextApiResponseServerIO<LobbyResponse>) => {
   if (req.method === 'POST') {
     const game = GameFactory.make(req, res);
 
