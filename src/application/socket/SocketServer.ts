@@ -5,17 +5,18 @@ import {
   ClientToServerEvents,
   InterServerEvents, ServerToClientEvents, SocketData} from './interfaces';
 
-export type NextApiResponseServerIO = NextApiResponse & {
+export class GameSocketIoServer extends Server<
+ClientToServerEvents,
+ServerToClientEvents,
+InterServerEvents,
+SocketData
+> {}
+
+export type NextApiResponseServerIO<T = any> = NextApiResponse<T> & {
   socket: Socket & {
     server: NetServer & {
-      io: SocketServer
+      io: GameSocketIoServer
     }
   };
 };
 
-export interface SocketServer extends Server<
-  ClientToServerEvents,
-  ServerToClientEvents,
-  InterServerEvents,
-  SocketData
-> {}

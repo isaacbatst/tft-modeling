@@ -2,11 +2,11 @@ import {
   ICarouselBoard,
   CarouselEventsDispatchers,
 } from '../../../domain/entities/Game/RoundsManager/Carousel';
-import {SocketServer} from '../SocketServer';
+import {GameSocketIoServer} from '../SocketServer';
 
 export class SocketIOCarouselEventsDispatcher implements
   CarouselEventsDispatchers {
-  constructor(private socket: SocketServer) {}
+  constructor(private socket: GameSocketIoServer) {}
 
   carouselStart(board: ICarouselBoard): void {
     this.socket.emit('carouselStart', board);

@@ -1,9 +1,11 @@
+import axios from 'axios';
 import {NextPage} from 'next';
 import {useEffect, useState} from 'react';
 import {io} from 'socket.io-client';
 import {SocketClient} from '../application/socket/SocketClient';
 import {GamePlayerDTO} from '../domain/entities/Game/Game';
 import {ICarouselBoard} from '../domain/entities/Game/RoundsManager/Carousel';
+import {StartResponse} from './api/start';
 
 const HomePage: NextPage = () => {
   const [board, setBoard] = useState<ICarouselBoard | null>(null);
@@ -13,6 +15,12 @@ const HomePage: NextPage = () => {
 
   useEffect(() => {
     console.log('connecting..');
+
+    axios.post<StartResponse>('/api/start')
+        .then(({data}) => {
+          setPlayersList(data.game.players);
+        })
+        .catch((error) => console.error(error));
 
     const socket: SocketClient = io();
 
@@ -52,7 +60,7 @@ const HomePage: NextPage = () => {
     <h2>Players</h2>
     {
       playersList.map((player) => {
-        return <p>player: {JSON.stringify(player)}</p>;
+        return <p key={player.id}>player: {JSON.stringify(player)}</p>;
       })
     }
   </div>;

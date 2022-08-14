@@ -79,10 +79,12 @@ export class Game {
   ) {
   }
 
-  public addPlayer(id: string) {
+  public handlePlayerConnected(id: string) {
     const sameId = this.players.getAll().find((player) => {
       return player.getId() === id;
     });
+
+    console.log('just connected', id);
 
     if (!sameId) {
       const player = new GamePlayer(id);
@@ -110,6 +112,10 @@ export class Game {
     return {
       players: this.players.getAll(),
     };
+  }
+
+  public getPlayers() {
+    return this.players.getAll().map(this.toDTO);
   }
 
   private setupPlayers() {

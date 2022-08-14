@@ -1,50 +1,25 @@
 import {NextApiRequest} from 'next';
 import {GameFactory} from '../../application/factories/GameFactory';
-import {
-  SocketServerFactory,
-} from '../../application/factories/SocketServerFactory';
 import {NextApiResponseServerIO} from '../../application/socket/SocketServer';
-import cookie from 'cookie';
-import {randomUUID} from 'crypto';
-import {Socket} from 'socket.io';
+import {GamePlayerDTO} from '../../domain/entities/Game/Game';
 
-const handler = (req: NextApiRequest, res: NextApiResponseServerIO) => {
-  const io = SocketServerFactory.make(res);
+export interface StartResponse {
+  game: {
+    players: GamePlayerDTO[]
+  }
+}
 
-  const game = GameFactory.make(io);
+const handler = (req: NextApiRequest,
+    res: NextApiResponseServerIO<StartResponse>) => {
+  if (req.method === 'POST') {
+    const game = GameFactory.make(req, res);
 
-  const handleConnection = (socket: Socket) => {
-    const token = findOrCreateCookie(socket, res);
-    game.addPlayer(token);
-  };
-
-  io.off('connection', handleConnection);
-
-  io.on('connection', handleConnection);
-
-  res.end();
-};
-
-const findOrCreateCookie = (socket: Socket, res: NextApiResponseServerIO) => {
-  const parsed = cookie.parse(socket.request.headers.cookie || '');
-
-  if (parsed['tft-cookie']) {
-    return parsed['tft-cookie'];
+    return res.status(200).json({game: {
+      players: game.getPlayers(),
+    }});
   }
 
-  const token = randomUUID();
-  const serialized = cookie.serialize('X-TFT-Cookie', token, {
-    path: '/',
-    maxAge: 86400,
-    httpOnly: true,
-  });
-
-  res.setHeader(
-      'Set-Cookie',
-      serialized,
-  );
-
-  return token;
+  res.status(405).end();
 };
 
 export default handler;

@@ -1,3 +1,4 @@
+import {NextApiRequest} from 'next';
 import {Game} from '../../domain/entities/Game/Game';
 import {GameDeck} from '../../domain/entities/Game/GameDeck/GameDeck';
 import {GamePlayersList} from '../../domain/entities/Game/GamePlayersList';
@@ -11,18 +12,50 @@ import {
 import {
   RoundsManager,
 } from '../../domain/entities/Game/RoundsManager/RoundsManager';
+import {CookiesHandler} from '../cookies/CookiesHandler';
 import {
   SocketIOCarouselEventsDispatcher,
 } from '../socket/adapters/CarouselEventsDispatcherAdapter';
 import {
   SocketIOGameEventsDispatcher,
 } from '../socket/adapters/GameEventDispatcherAdapter';
-import {SocketServer} from '../socket/SocketServer';
+import {
+  GameSocketIoServer,
+  NextApiResponseServerIO,
+} from '../socket/SocketServer';
+import {GameSocketServerFactory} from './GameSocketServerFactory';
 
 export class GameFactory {
-  static make(socket: SocketServer): Game {
+  private static game: Game | null = null;
+  private static socketServer: GameSocketIoServer | null = null;
+
+  static make(
+      req: NextApiRequest,
+      res: NextApiResponseServerIO,
+  ) {
+    const socketServer = GameSocketServerFactory.make(res);
+    GameFactory.socketServer = socketServer;
+
+    const game = GameFactory.getGameInstance(socketServer);
+
+    GameFactory.handleConnectedUser(req, res, game);
+    return game;
+  }
+
+  private static getGameInstance(socketServer: GameSocketIoServer) {
+    if (!GameFactory.game) {
+      const game = GameFactory.createGame(socketServer);
+      GameFactory.addGameListeners();
+
+      return game;
+    }
+
+    return GameFactory.game;
+  }
+
+  private static createGame(socketServer: GameSocketIoServer) {
     const carouselEventsDispatchers = new SocketIOCarouselEventsDispatcher(
-        socket,
+        socketServer,
     );
     const momentCountdown = new GameCountdown();
     const playersCountdown = new GameCountdown();
@@ -37,10 +70,34 @@ export class GameFactory {
     const roundsManager = new RoundsManager(momentsList);
     const deck = new GameDeck();
     const playersList = new GamePlayersList([]);
-    const gameEventDispatchers = new SocketIOGameEventsDispatcher(socket);
+    const gameEventDispatchers = new SocketIOGameEventsDispatcher(socketServer);
     const game = new Game(
         deck, playersList, roundsManager, gameEventDispatchers);
 
+    GameFactory.game = game;
+
     return game;
+  }
+
+  private static handleConnectedUser(
+      req: NextApiRequest, res: NextApiResponseServerIO,
+      game: Game,
+  ) {
+    const token = CookiesHandler.findOrCreateCookie(req, res);
+    game.handlePlayerConnected(token);
+  }
+
+  private static addGameListeners() {
+    if (!GameFactory.socketServer) {
+      throw new Error('NULL_SOCKET_SERVER');
+    }
+
+    GameFactory.socketServer.off('connection', GameFactory.handleConnection);
+
+    GameFactory.socketServer.on('connection', GameFactory.handleConnection);
+  }
+
+  private static handleConnection() {
+
   }
 }
