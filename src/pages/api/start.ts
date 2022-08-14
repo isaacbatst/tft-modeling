@@ -27,7 +27,7 @@ const handler = (req: NextApiRequest, res: NextApiResponseServerIO) => {
 
 const findOrCreateCookie = (socket: Socket, res: NextApiResponseServerIO) => {
   const parsed = cookie.parse(socket.request.headers.cookie || '');
-  console.log(parsed);
+
   if (parsed['tft-cookie']) {
     return parsed['tft-cookie'];
   }
