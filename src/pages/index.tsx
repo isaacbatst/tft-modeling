@@ -8,19 +8,22 @@ const HomePage: NextPage = () => {
   } = useLobby();
 
 
-  return <div>
-    <h1>TFT</h1>
-    {
-      !connected && <p
-      >Conectando...</p>
-    }
-    <h2>Players</h2>
-    {
-      playersList.map((player) => {
-        return <p key={player.id}>player: {JSON.stringify(player)}</p>;
-      })
-    }
-  </div>;
+  return (
+    <div>
+      <h1>TFT</h1>
+      {
+        connected ?
+        (
+          playersList.map((player) => (
+            <div key={player.id}>{JSON.stringify(player)}</div>
+          ))
+        ) :
+        (
+          <div>Conectando...</div>
+        )
+      }
+    </div>
+  );
 };
 
 export default HomePage;
