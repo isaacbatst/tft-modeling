@@ -11,5 +11,13 @@
 - Each round
   - Renew players hands 
   - Give players 5 gold
-- Each fight
-  - Sort players to fight each other
+  - If only one player remains
+    - Game should finish
+  - Else
+    - Should go to next round
+
+#### Carousel
+- Init countdown
+  - Resolve when countdown ends
+  - Take random carousel characters
+  - Emit event

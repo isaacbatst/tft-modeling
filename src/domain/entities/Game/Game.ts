@@ -1,9 +1,8 @@
 // import {Character, CharacterAttributes, Sinergy} from './Character';
 // import {Item} from './Item';
-export enum GameErrors {
-  BELLOW_MIN_PLAYERS = 'BELLOW_MIN_PLAYERS',
-  REPEATED_PLAYER = 'REPEATED_PLAYER'
-}
+
+import {DeckForCarousel,
+  PlayersListForCarousel} from './RoundsManager/Carousel';
 
 // interface Card {
 
@@ -26,56 +25,54 @@ export enum GameErrors {
 // }
 
 export interface IHand {}
-
-export interface GameDeck {
-  takeRandomHand(): IHand[]
+export interface GameDeck extends DeckForCarousel {
+  takeRandomHand(): IHand[];
 }
 
 export interface IGamePlayer {
   getId(): string
+  getLife(): number
+  decrementLife(value: number): void
   incrementGold(value: number): void
   setGold(value: number): void
   setHand(characters: IHand[]): void
 }
 
-export interface IGameCountdown {
-  subscribe(callback: (time: number) => void): number;
-  unsubscribe(index: number): void;
-  start(roundTime: number): Promise<void>;
+export type PlayerCouple = [IGamePlayer, IGamePlayer];
+
+export interface IGamePlayersList extends PlayersListForCarousel {
+  getAll(): IGamePlayer[];
+  makeBattleCouples(): PlayerCouple[]
 }
 
-export interface IGamePlayersList {
-  getAll(): IGamePlayer[];
-  makeCouples(): [IGamePlayer, IGamePlayer][]
+export interface IRoundsManager {
+  start(
+    players: IGamePlayersList,
+    goldPerRound: number,
+    deck: GameDeck
+  ): Promise<void>,
 }
 
 export class Game {
-  static INITIAL_GOLD = 3;
-  static ROUND_PREPARATION_TIME = 3;
-  static ROUND_BATTLE_TIME = 5;
-  static GOLD_PER_ROUND = 5;
-
-  private players: IGamePlayersList;
-  private deck: GameDeck;
-  private stage: number;
-  private round: number;
-  private countdown: IGameCountdown;
+  private static INITIAL_GOLD = 3;
+  private static GOLD_PER_ROUND = 5;
 
   constructor(
-      deck: GameDeck,
-      countdown: IGameCountdown,
-      playersList: IGamePlayersList,
+      private deck: GameDeck,
+      private players: IGamePlayersList,
+      private roundsManager: IRoundsManager,
   ) {
-    this.stage = 1;
-    this.round = 1;
-    this.deck = deck;
-    this.countdown = countdown;
-    this.players = playersList;
   }
 
-  public start() {
+  public async start() {
     this.setupPlayers();
-    return this.startRounds();
+
+    await this.roundsManager
+        .start(this.players, Game.GOLD_PER_ROUND, this.deck);
+
+    return {
+      players: this.players.getAll(),
+    };
   }
 
 
@@ -85,26 +82,6 @@ export class Game {
 
       player.setHand(hand);
       player.setGold(Game.INITIAL_GOLD);
-    });
-  }
-
-  private async startRounds() {
-    this.countdown.subscribe((time) => console.log(time));
-
-    await this.countdown.start(Game.ROUND_PREPARATION_TIME);
-
-    this.players.makeCouples();
-    await this.countdown.start(Game.ROUND_BATTLE_TIME);
-
-    this.refillPlayers();
-  }
-
-  private refillPlayers() {
-    this.players.getAll().forEach((player) => {
-      player.incrementGold(Game.GOLD_PER_ROUND);
-
-      const hand = this.deck.takeRandomHand();
-      player.setHand(hand);
     });
   }
 }

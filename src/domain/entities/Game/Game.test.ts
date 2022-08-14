@@ -1,40 +1,24 @@
+import {DeckMock} from './DeckMock';
 import {
-  Game, GameDeck,
-  IGameCountdown, IGamePlayer, IGamePlayersList, IHand,
+  Game, IRoundsManager,
 } from './Game';
+import {GamePlayersListMock} from './GamePlayersListMock';
 
-class DeckMock implements GameDeck {
-  takeRandomHand = jest.fn((): IHand[] => {
-    return [];
-  });
-}
 
-class CountdownMock implements IGameCountdown {
+class RoundMomentsMock implements IRoundsManager {
   start = jest.fn();
-  subscribe = jest.fn();
-  unsubscribe = jest.fn();
-}
-
-class GamePlayersListMock implements IGamePlayersList {
-  makeCouples = jest.fn((): [IGamePlayer, IGamePlayer][] => {
-    return [];
-  });
-
-  getAll(): IGamePlayer[] {
-    return [];
-  }
 }
 
 const makeSut = () => {
   const deck = new DeckMock();
 
-  const countdown = new CountdownMock();
   const playersList = new GamePlayersListMock();
+  const roundMoments = new RoundMomentsMock();
 
-  const game = new Game(deck, countdown, playersList);
+  const game = new Game(deck, playersList, roundMoments);
 
   return {
-    game, deck, countdown, playersList,
+    game, deck, playersList, roundMoments,
   };
 };
 
@@ -68,44 +52,11 @@ describe('Game', () => {
       });
     });
 
-    it('should call countdown start with ROUND_PREPARATION_TIME', () => {
-      const {game, countdown} = makeSut();
-      game.start();
-
-      expect(countdown.start).toHaveBeenCalledTimes(1);
-      expect(countdown.start).toBeCalledWith(Game.ROUND_PREPARATION_TIME);
-    });
-
-    it('should call playersList makeCouples', async () => {
-      const {game, playersList} = makeSut();
+    it('should call roundMoments start', async () => {
+      const {game, roundMoments} = makeSut();
       await game.start();
 
-      expect(playersList.makeCouples).toBeCalled();
-    });
-
-    it('should call countdown start with ROUND_BATTLE_TIME', async () => {
-      const {game, countdown} = makeSut();
-      await game.start();
-
-      expect(countdown.start).toHaveBeenCalledTimes(2);
-      expect(countdown.start).toBeCalledWith(Game.ROUND_BATTLE_TIME);
-    });
-
-    it('should call players refill functions after battle time', async () => {
-      const {game, playersList} = makeSut();
-      const promise = game.start();
-
-      playersList.getAll().forEach((player) => {
-        expect(player.incrementGold).not.toBeCalled();
-        expect(player.setHand).toHaveBeenCalledTimes(1);
-      });
-
-      await promise;
-
-      playersList.getAll().forEach((player) => {
-        expect(player.incrementGold).toBeCalled();
-        expect(player.setHand).toHaveBeenCalledTimes(2);
-      });
+      expect(roundMoments.start).toBeCalled();
     });
   });
 });
