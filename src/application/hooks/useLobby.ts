@@ -12,6 +12,7 @@ export const useLobby = () => {
   const [connected, setConnected] = useState(false);
   const [isReleased, setIsReleased] = useState(false);
   const [playersList, setPlayersList] = useState<GamePlayerDTO[]>([]);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
     console.log('connecting..');
@@ -19,6 +20,7 @@ export const useLobby = () => {
     axios.post<LobbyResponse>('/api/lobby')
         .then(({data}) => {
           setPlayersList(data.game.players);
+          setToken(data.token);
         })
         .catch((error) => console.error(error));
 
@@ -54,9 +56,10 @@ export const useLobby = () => {
   }, []);
 
   return {
-    board, setBoard,
-    connected, setConnected,
-    isReleased, setIsReleased,
-    playersList, setPlayersList,
+    board,
+    connected,
+    isReleased,
+    playersList,
+    token,
   };
 };

@@ -4,6 +4,7 @@ import {useLobby} from '../application/hooks/useLobby';
 const HomePage: NextPage = () => {
   const {
     connected,
+    token,
     playersList,
   } = useLobby();
 
@@ -15,7 +16,10 @@ const HomePage: NextPage = () => {
         connected ?
         (
           playersList.map((player) => (
-            <div key={player.id}>{JSON.stringify(player)}</div>
+            <div
+              key={player.id}
+              className={player.id === token ? 'bg-slate-500' : ''}
+            >{JSON.stringify(player)}</div>
           ))
         ) :
         (

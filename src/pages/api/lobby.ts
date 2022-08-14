@@ -5,18 +5,24 @@ import {GamePlayerDTO} from '../../domain/entities/Game/Game';
 
 export interface LobbyResponse {
   game: {
-    players: GamePlayerDTO[]
-  }
+    players: GamePlayerDTO[],
+  },
+  token: string
 }
 
 const handler = (req: NextApiRequest,
     res: NextApiResponseServerIO<LobbyResponse>) => {
   if (req.method === 'POST') {
-    const game = GameFactory.make(req, res);
+    const {game, token} = GameFactory.make(req, res);
 
-    return res.status(200).json({game: {
-      players: game.getPlayers(),
-    }});
+    return res.status(200).json(
+        {
+          game: {
+            players: game.getPlayers(),
+          },
+          token,
+        },
+    );
   }
 
   res.status(405).end();

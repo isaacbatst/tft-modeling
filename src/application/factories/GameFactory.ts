@@ -39,8 +39,11 @@ export class GameFactory {
 
     const game = GameFactory.getGameInstance(socketServer);
 
-    GameFactory.handleConnectedUser(req, res, game);
-    return game;
+    const token = GameFactory.handleConnectedUser(req, res, game);
+    return {
+      game,
+      token,
+    };
   }
 
   private static getGameInstance(socketServer: GameSocketIoServer) {
@@ -88,6 +91,8 @@ export class GameFactory {
   ) {
     const token = CookiesHandler.findOrCreateCookie(req, res);
     game.handlePlayerConnected(token);
+
+    return token;
   }
 
   private static addGameListeners() {
