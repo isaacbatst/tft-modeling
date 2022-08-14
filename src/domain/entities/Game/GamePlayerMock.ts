@@ -13,6 +13,7 @@ export class GamePlayerMock implements IGamePlayer {
 
   setHand = jest.fn();
   setGold = jest.fn();
+  getGold = jest.fn();
   incrementGold = jest.fn();
   getLife = jest.fn(() => this.life);
   decrementLife = jest.fn((value: number) => this.life -= value);
