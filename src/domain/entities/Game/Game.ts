@@ -54,10 +54,8 @@ export interface IRoundsManager {
 }
 
 export class Game {
-  static INITIAL_GOLD = 3;
-  static ROUND_PREPARATION_TIME = 3;
-  static ROUND_BATTLE_TIME = 5;
-  static GOLD_PER_ROUND = 5;
+  private static INITIAL_GOLD = 3;
+  private static GOLD_PER_ROUND = 5;
 
   constructor(
       private deck: GameDeck,
