@@ -89,7 +89,7 @@ export class Game {
         .start(this.players, Game.GOLD_PER_ROUND, this.deck);
 
     return {
-      players: this.players.getAll(),
+      players: this.players.getDTOList(),
     };
   }
 
