@@ -3,9 +3,7 @@ import {useLobby} from '../application/hooks/useLobby';
 
 const HomePage: NextPage = () => {
   const {
-    board,
     connected,
-    isReleased,
     playersList,
   } = useLobby();
 
@@ -15,15 +13,6 @@ const HomePage: NextPage = () => {
     {
       !connected && <p
       >Conectando...</p>
-    }
-    {
-      board && board.getAll().map((character) => {
-        return `${character.getCharacter().getName()} \
-              with ${character.getItems()[0].getName()}`;
-      })
-    }
-    {
-      isReleased ? <p>Released to pick a char</p> : <p>Wait for</p>
     }
     <h2>Players</h2>
     {
