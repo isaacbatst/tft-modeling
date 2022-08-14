@@ -1,3 +1,4 @@
+import {Socket} from 'socket.io';
 import {
   PlayersListEventDispatcher,
 } from '../../domain/entities/Game/GamePlayersList';
@@ -18,3 +19,6 @@ export interface InterServerEvents {
 
 export interface SocketData {
 };
+
+export interface GameSocket extends Socket<
+  ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData> {}
