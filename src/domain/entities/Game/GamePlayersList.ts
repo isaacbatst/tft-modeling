@@ -17,6 +17,7 @@ export interface IGamePlayer {
   getId(): string
   getLife(): number
   getGold(): number
+  getIsOwner(): boolean
   decrementLife(value: number): void
   incrementGold(value: number): void
   setGold(value: number): void
@@ -49,7 +50,9 @@ export class GamePlayersList implements IGamePlayersList {
     });
 
     if (!player) {
-      const player = new GamePlayer(id);
+      const isOwner = this.players.length === 0;
+      const player = new GamePlayer(id, isOwner);
+
       this.players.push(player);
       this.dispatch.playerAdded(this.getDTOList());
     } else {
@@ -122,6 +125,7 @@ export class GamePlayersList implements IGamePlayersList {
       id: player.getId(),
       life: player.getLife(),
       connected: player.getConnected(),
+      isOwner: player.getIsOwner(),
     };
   }
 }

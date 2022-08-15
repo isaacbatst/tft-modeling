@@ -57,6 +57,7 @@ export interface GamePlayerDTO {
   life: number,
   gold: number,
   connected: boolean,
+  isOwner: boolean
 }
 
 export class Game {

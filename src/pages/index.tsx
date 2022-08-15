@@ -8,6 +8,7 @@ const HomePage: NextPage = () => {
     playersList,
   } = useLobby();
 
+  const player = playersList.find((player) => player.id === token);
 
   return (
     <div>
@@ -15,12 +16,21 @@ const HomePage: NextPage = () => {
       {
         connected ?
         (
-          playersList.map((player) => (
-            <div
-              key={player.id}
-              className={player.id === token ? 'bg-slate-500' : ''}
-            >{JSON.stringify(player)}</div>
-          ))
+          <div>
+            {
+              playersList.map((player) => (
+                <div
+                  key={player.id}
+                  className={player.id === token ? 'bg-slate-500' : ''}
+                >{JSON.stringify(player)}</div>
+              ))
+            }
+            {
+              player && player.isOwner && (
+                <button className='border-2 px-5 py-1'>Iniciar</button>
+              )
+            }
+          </div>
         ) :
         (
           <div>Conectando...</div>

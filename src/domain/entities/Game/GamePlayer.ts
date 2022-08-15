@@ -7,13 +7,15 @@ export class GamePlayer implements IGamePlayer {
   private gold: number;
   private hand: IHand[];
   private connected: boolean;
+  private owner: boolean;
 
-  constructor(id: string) {
+  constructor(id: string, owner: boolean = false) {
     this.id = id;
     this.life = 100;
     this.gold = 0;
     this.hand = [];
     this.connected = true;
+    this.owner = owner;
   }
 
   getId(): string {
@@ -28,6 +30,10 @@ export class GamePlayer implements IGamePlayer {
 
   getConnected(): boolean {
     return this.connected;
+  }
+
+  getIsOwner(): boolean {
+    return this.owner;
   }
 
   setConnected(connected: boolean): void {
