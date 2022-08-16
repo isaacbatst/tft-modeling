@@ -17,12 +17,18 @@ const HomePage: NextPage = () => {
         connected ?
         (
           <div>
+            <h2>Players</h2>
+            {
+              playersList.length === 0 && (
+                <div>Nenhum jogador conectado</div>
+              )
+            }
             {
               playersList.map((player) => (
                 <div
                   key={player.id}
                   className={player.id === token ? 'bg-slate-500' : ''}
-                >{JSON.stringify(player)}</div>
+                ><strong>Você</strong> {JSON.stringify(player)}</div>
               ))
             }
             {
