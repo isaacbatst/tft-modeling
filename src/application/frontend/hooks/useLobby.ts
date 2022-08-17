@@ -1,9 +1,9 @@
 import axios from 'axios';
 import {useEffect, useState} from 'react';
 import {io} from 'socket.io-client';
-import {GamePlayerDTO} from '../../domain/entities/Game/Game';
-import {LobbyResponse} from '../../pages/api/lobby';
-import {SocketClient} from '../socket/SocketClient';
+import {GamePlayerDTO} from '../../../domain/entities/Game/Game';
+import {LobbyResponse} from '../../../pages/api/lobby';
+import {SocketClient} from '../../server/socket/SocketClient';
 
 export const useLobby = () => {
   const [connected, setConnected] = useState(false);
@@ -27,18 +27,8 @@ export const useLobby = () => {
       setConnected(true);
     });
 
-    socket.on('playerAdded', (playersList) => {
+    socket.on('playersUpdated', (playersList) => {
       console.log('player added on client');
-      setPlayersList(playersList);
-    });
-
-    socket.on('playerDisconnected', (playersList) => {
-      console.log('player disconnected on client');
-      setPlayersList(playersList);
-    });
-
-    socket.on('playerReconnected', (playersList) => {
-      console.log('player disconnected on client');
       setPlayersList(playersList);
     });
   }, []);

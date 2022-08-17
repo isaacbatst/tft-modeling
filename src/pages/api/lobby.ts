@@ -1,6 +1,8 @@
 import {NextApiRequest} from 'next';
 import {GameSingleton} from '../../application/factories/GameSingleton';
-import {NextApiResponseServerIO} from '../../application/socket/SocketServer';
+import {
+  NextApiResponseServerIO,
+} from '../../application/server/socket/SocketServer';
 import {GamePlayerDTO} from '../../domain/entities/Game/Game';
 
 export interface LobbyResponse {
@@ -13,7 +15,7 @@ export interface LobbyResponse {
 const handler = (req: NextApiRequest,
     res: NextApiResponseServerIO<LobbyResponse>) => {
   if (req.method === 'POST') {
-    const {game, token} = GameSingleton.make(req, res);
+    const {game, token} = GameSingleton.getInstance(req, res);
 
     return res.status(200).json(
         {

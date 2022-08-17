@@ -4,10 +4,10 @@ import {
   ClientToServerEvents,
   InterServerEvents,
   ServerToClientEvents, SocketData,
-} from '../socket/interfaces';
+} from '../server/socket/interfaces';
 import {
   GameSocketIoServer, NextApiResponseServerIO,
-} from '../socket/SocketServer';
+} from '../server/socket/SocketServer';
 
 export class GameSocketServerFactory {
   static make(res: NextApiResponseServerIO): GameSocketIoServer {

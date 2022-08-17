@@ -1,4 +1,4 @@
-import {Game} from '../../domain/entities/Game/Game';
+import {Game} from '../../../domain/entities/Game/Game';
 import {CookiesHandler} from '../cookies/CookiesHandler';
 import {GameSocket} from './interfaces';
 import {GameSocketIoServer} from './SocketServer';

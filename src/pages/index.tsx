@@ -1,5 +1,5 @@
 import {NextPage} from 'next';
-import {useLobby} from '../application/hooks/useLobby';
+import {useLobby} from '../application/frontend/hooks/useLobby';
 
 const HomePage: NextPage = () => {
   const {

@@ -1,9 +1,9 @@
 import {
   GamePlayerDTO,
-} from '../../../domain/entities/Game/Game';
+} from '../../../../domain/entities/Game/Game';
 import {
   PlayersListEventDispatcher,
-} from '../../../domain/entities/Game/PlayersManager/PlayersList';
+} from '../../../../domain/entities/Game/PlayersManager/PlayersList';
 import {GameSocketIoServer} from '../SocketServer';
 
 export class SocketIOPlayersListDispatcher implements
