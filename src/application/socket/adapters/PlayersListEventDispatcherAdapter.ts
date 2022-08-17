@@ -10,15 +10,7 @@ export class SocketIOPlayersListDispatcher implements
   PlayersListEventDispatcher {
   constructor(private socketServer: GameSocketIoServer) {}
 
-  playerAdded(players: GamePlayerDTO[]): void {
-    this.socketServer.emit('playerAdded', players);
-  }
-
-  playerDisconnected(players: GamePlayerDTO[]): void {
-    this.socketServer.emit('playerDisconnected', players);
-  }
-
-  playerReconnected(players: GamePlayerDTO[]): void {
-    this.socketServer.emit('playerReconnected', players);
+  playersUpdated(players: GamePlayerDTO[]): void {
+    this.socketServer.emit('playersUpdated', players);
   }
 }

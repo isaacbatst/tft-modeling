@@ -13,9 +13,7 @@ export enum PlayersListErrors {
 }
 
 export interface PlayersListEventDispatcher {
-  playerAdded(players: GamePlayerDTO[]): void,
-  playerDisconnected(players: GamePlayerDTO[]): void
-  playerReconnected(players: GamePlayerDTO[]): void
+  playersUpdated(players: GamePlayerDTO[]): void
 }
 
 export interface IGamePlayer {
@@ -37,12 +35,24 @@ export type PlayerCoupleDTO = [GamePlayerDTO, GamePlayerDTO];
 
 export class PlayersList implements IPlayersList {
   constructor(
-      private players: IGamePlayer[] = [],
+    private dispatch: PlayersListEventDispatcher,
+    private players: IGamePlayer[] = [],
   ) {}
   public getAll() {
     return this.players.map(this.toDTO);
   }
 
+  public findById(id: string): GamePlayerDTO | null {
+    const player = this.players.find((player) => player.getId() === id);
+
+    return player ? this.toDTO(player) : null;
+  }
+
+  public getLength(): number {
+    return this.players.length;
+  }
+
+  // All updates should be dispatched
   public add(
       {
         id,
@@ -57,28 +67,22 @@ export class PlayersList implements IPlayersList {
     const player = new GamePlayer(id, isOwner);
 
     this.players.push(player);
-  }
-
-  public findById(id: string): GamePlayerDTO | null {
-    const player = this.players.find((player) => player.getId() === id);
-
-    return player ? this.toDTO(player) : null;
-  }
-
-  public getLength(): number {
-    return this.players.length;
+    this.dispatchPlayersUpdate();
   }
 
   public setPlayersGoldTo(value: number): void {
     this.players.forEach((player) => {
       player.setGold(value);
     });
+
+    this.dispatchPlayersUpdate();
   }
 
   public setPlayersHand(getHand: () => IHand): void {
     this.players.forEach((player) => {
       player.setHand(getHand());
     });
+    this.dispatchPlayersUpdate();
   }
 
   public setPlayerConnected(id: string, connected: boolean = true): void {
@@ -89,6 +93,11 @@ export class PlayersList implements IPlayersList {
     }
 
     player.setConnected(connected);
+    this.dispatchPlayersUpdate();
+  }
+
+  private dispatchPlayersUpdate() {
+    this.dispatch.playersUpdated(this.players.map(this.toDTO));
   }
 
   private toDTO(player: IGamePlayer): GamePlayerDTO {

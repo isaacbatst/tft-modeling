@@ -1,8 +1,8 @@
 import {
-  GamePlayerDTO, IPlayersManager, IHand,
+  GamePlayerDTO, IHand, IPlayersManager,
 } from '../Game';
 import {
-  PlayerCoupleDTO, PlayersListEventDispatcher,
+  PlayerCoupleDTO,
 } from './PlayersList';
 
 export interface IPlayersList {
@@ -23,7 +23,6 @@ export enum GamePlayersListErrors {
 export class PlayersManager implements IPlayersManager {
   constructor(
     private playersList: IPlayersList,
-    private dispatch: PlayersListEventDispatcher,
   ) {}
 
   public makeBattleCouples(): PlayerCoupleDTO[] {
@@ -41,7 +40,6 @@ export class PlayersManager implements IPlayersManager {
 
     if (player) {
       this.playersList.setPlayerConnected(id, false);
-      this.dispatch.playerDisconnected(this.playersList.getAll());
     }
   }
 
@@ -50,13 +48,11 @@ export class PlayersManager implements IPlayersManager {
 
     if (player) {
       this.playersList.setPlayerConnected(id);
-      this.dispatch.playerReconnected(this.getPlayersList());
       return;
     }
 
     const isOwner = this.playersList.getLength() === 0;
     this.playersList.add({id, isOwner});
-    this.dispatch.playerAdded(this.getPlayersList());
   }
 
   public getPlayersList(): GamePlayerDTO[] {

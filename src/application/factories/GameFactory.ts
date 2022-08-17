@@ -24,7 +24,9 @@ import {
 import {
   SocketIOPlayersListDispatcher,
 } from '../socket/adapters/PlayersListEventDispatcherAdapter';
-import {GameSocket} from '../socket/interfaces';
+import {
+  GameConnectionEventsHandler,
+} from '../socket/GameConnectionEventsHandler';
 import {
   GameSocketIoServer,
   NextApiResponseServerIO,
@@ -54,7 +56,11 @@ export class GameFactory {
   private static getGameInstance(socketServer: GameSocketIoServer) {
     if (!GameFactory.game) {
       const game = GameFactory.createGame(socketServer);
-      GameFactory.addGameListeners();
+      const connectionEventsHandler = new GameConnectionEventsHandler(
+          socketServer,
+          game,
+      );
+      connectionEventsHandler.addGameListeners();
 
       return game;
     }
@@ -81,9 +87,9 @@ export class GameFactory {
     const playersListDispatcher = new SocketIOPlayersListDispatcher(
         socketServer,
     );
-    const playersList = new PlayersList();
+    const playersList = new PlayersList(playersListDispatcher);
     const playersManager = new PlayersManager(
-        playersList, playersListDispatcher,
+        playersList,
     );
 
     const game = new Game(
@@ -91,7 +97,6 @@ export class GameFactory {
     );
 
     GameFactory.game = game;
-
     return game;
   }
 
@@ -103,30 +108,5 @@ export class GameFactory {
     game.handlePlayerConnected(token);
 
     return token;
-  }
-
-  private static addGameListeners() {
-    if (!GameFactory.socketServer) {
-      throw new Error('NULL_SOCKET_SERVER');
-    }
-
-    GameFactory.socketServer.off('connection', GameFactory.handleConnection);
-
-    GameFactory.socketServer.on('connection', GameFactory.handleConnection);
-  }
-
-  private static handleConnection(socket: GameSocket) {
-    socket.on('disconnect', () => {
-      const cookies = socket.request.headers.cookie;
-      const parsed = CookiesHandler.parse(cookies || '');
-      const {socketServer} = GameFactory;
-      const {game} = GameFactory;
-      const id = parsed[CookiesHandler.COOKIE_NAME];
-
-      if (id && socketServer && game) {
-        game.handlePlayerDisconnected(id);
-        socketServer.emit('playerDisconnected', game.getPlayers());
-      }
-    });
   }
 }
