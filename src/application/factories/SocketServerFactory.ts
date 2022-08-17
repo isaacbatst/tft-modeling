@@ -5,21 +5,10 @@ import {
   InterServerEvents,
   ServerToClientEvents, SocketData,
 } from '../server/socket/interfaces';
-import {
-  GameSocketIoServer, NextApiResponseServerIO,
-} from '../server/socket/SocketServer';
+import {NextApiResponseServerIO} from '../server/socket/SocketServer';
 
-export class GameSocketServerFactory {
-  static make(res: NextApiResponseServerIO): GameSocketIoServer {
-    if (res.socket.server.io) {
-      console.log('Socket is already running');
-      return res.socket.server.io;
-    }
-
-    return this.createServer(res);
-  }
-
-  private static createServer(res: NextApiResponseServerIO) {
+export class SocketServerFactory {
+  public static make(res: NextApiResponseServerIO) {
     console.log('Socket is initializing');
     const httpServer: HttpServer = res.socket.server as any;
 

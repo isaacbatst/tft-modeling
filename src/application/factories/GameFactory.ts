@@ -25,6 +25,9 @@ import {
   SocketIOPlayersListDispatcher,
 } from '../server/socket/adapters/PlayersListEventDispatcherAdapter';
 import {
+  GameConnectionEventsHandler,
+} from '../server/socket/GameConnectionEventsHandler';
+import {
   GameSocketIoServer,
 } from '../server/socket/SocketServer';
 
@@ -56,6 +59,12 @@ export class GameFactory {
     const game = new Game(
         deck, playersManager, roundsManager,
     );
+
+    const connectionEventsHandler = new GameConnectionEventsHandler(
+        socketServer,
+        game,
+    );
+    connectionEventsHandler.addGameListeners();
 
     return game;
   }
