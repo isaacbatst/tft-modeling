@@ -1,12 +1,18 @@
-class SinergyEffect {
-  private description: string;
-  private charactersRequiredOnBoard: number;
+
+export interface ICharacter {
+  getName(): string
 }
 
-export class Sinergy {
-  private name: string;
-  private sinergyEffects: SinergyEffect[];
-}
+
+// class SinergyEffect {
+//   private description: string;
+//   private charactersRequiredOnBoard: number;
+// }
+
+// export class Sinergy {
+//   private name: string;
+//   private sinergyEffects: SinergyEffect[];
+// }
 
 // type SkillResourceType = 'mana' | 'energy'
 
@@ -22,10 +28,10 @@ export class Sinergy {
 //   private abilityDamage: number;
 // }
 
-export class Character {
-  private name: string;
-  private tier: number;
-  private cost: number;
-  private sinergies: Sinergy[];
-  private attributes: CharacterAttributes;
-}
+// export class Character {
+//   private name: string;
+//   private tier: number;
+//   private cost: number;
+//   private sinergies: Sinergy[];
+//   private attributes: CharacterAttributes;
+// }

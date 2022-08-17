@@ -1,3 +1,8 @@
+export interface IItem {
+  getName(): string
+}
+
+
 // class AttributeBuff {
 //   private attribute: string;
 //   private value: number;

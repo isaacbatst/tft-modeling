@@ -1,6 +1,6 @@
 import {
-  ICarouselBoard,
   CarouselEventsDispatchers,
+  CarouselState,
 } from '../../../domain/entities/Game/RoundsManager/Carousel';
 import {GameSocketIoServer} from '../SocketServer';
 
@@ -8,16 +8,10 @@ export class SocketIOCarouselEventsDispatcher implements
   CarouselEventsDispatchers {
   constructor(private socket: GameSocketIoServer) {}
 
-  carouselStart(board: ICarouselBoard): void {
-    this.socket.emit('carouselStart', board);
+  carouselEnd(state: CarouselState): void {
+    this.socket.emit('carouselEnd', state);
   };
-  carouselEnd(): void {
-    this.socket.emit('carouselEnd');
-  };
-  releasePlayers(): void {
-    this.socket.emit('releasePlayers');
-  };
-  releaseCountdownChange(time: number): void {
-    this.socket.emit('releaseCountdownChange', time);
+  releasePlayers(state: CarouselState): void {
+    this.socket.emit('releasePlayers', state);
   };
 }

@@ -6,21 +6,14 @@ export interface IGameCountdown {
   start(roundTime: number): Promise<void>;
 }
 
-export interface ICharacter {
-  getName(): string
-}
-
-export interface IItem {
-  getName(): string
-}
-
-export interface ICharacterInGame {
-  getCharacter(): ICharacter,
-  getItems(): IItem[]
+export interface ICharacterInCarousel {
+  character: { name: string },
+  item: { name: string }
 }
 export interface ICarouselBoard {
-  getAll(): ICharacterInGame[]
+  getAll(): ICharacterInCarousel[]
 }
+
 export interface DeckForCarousel {
   takeRandomCarouselBoard(): ICarouselBoard
 }
@@ -29,11 +22,15 @@ export interface CarouselPlayerManager {
   makeCarouselCouples(): PlayerCoupleDTO[]
 }
 
+export interface CarouselState {
+  releaseIndex: number,
+  couples: PlayerCoupleDTO[],
+  board: ICharacterInCarousel[]
+}
+
 export interface CarouselEventsDispatchers {
-  carouselStart: (board: ICarouselBoard) => void,
-  carouselEnd: () => void,
-  releasePlayers: () => void,
-  releaseCountdownChange: (time: number) => void
+  carouselEnd: (state: CarouselState) => void,
+  releasePlayers: (state: CarouselState) => void,
 }
 
 export class Carousel implements IGameRoundMoment {
@@ -49,23 +46,26 @@ export class Carousel implements IGameRoundMoment {
   async start(
       playerManager: CarouselPlayerManager, deck: DeckForCarousel,
   ): Promise<void> {
-    const unsubscribe = this.playersCountdown
-        .subscribe(this.dispatch.releaseCountdownChange);
-
     const board = deck.takeRandomCarouselBoard();
     const couples = playerManager.makeCarouselCouples();
 
-    this.dispatch.carouselStart(board);
-
     for (let index = 0; index < couples.length; index += 1) {
-      this.dispatch.releasePlayers();
+      this.dispatch.releasePlayers({
+        releaseIndex: index,
+        board: board.getAll(),
+        couples,
+      });
+
       await this.playersCountdown
           .start(Carousel.PLAYERS_COUNTDOWN_TIME);
     }
 
     await this.finalCountdown.start(Carousel.FINAL_COUNTDOWN_TIME);
 
-    unsubscribe();
-    this.dispatch.carouselEnd();
+    this.dispatch.carouselEnd({
+      releaseIndex: couples.length - 1,
+      board: board.getAll(),
+      couples,
+    });
   }
 }
