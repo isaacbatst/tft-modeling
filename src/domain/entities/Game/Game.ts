@@ -1,10 +1,10 @@
 // import {Character, CharacterAttributes, Sinergy} from './Character';
 // import {Item} from './Item';
 
-import {PlayerCoupleDTO} from './GamePlayersList';
+import {PlayerCoupleDTO} from './PlayersManager/PlayersList';
 import {
   DeckForCarousel,
-  PlayersListForCarousel,
+  CarouselPlayerManager,
 } from './RoundsManager/Carousel';
 
 // interface Card {
@@ -32,21 +32,21 @@ export interface IGameDeck extends DeckForCarousel {
   takeRandomHand(): IHand[];
 }
 
-export interface IGamePlayersList extends PlayersListForCarousel {
+export interface IPlayersManager extends CarouselPlayerManager {
   makeBattleCouples(): PlayerCoupleDTO[]
   validatePlayers(): void;
   addPlayer(id: string): void;
   disconnectPlayer(id: string): void
-  getDTOList(): GamePlayerDTO[];
+  getPlayersList(): GamePlayerDTO[];
   setupPlayers(setup: {
     gold: number,
-    getRandomHand: () => IHand,
+    getHand: () => IHand,
   }): void
 }
 
 export interface IRoundsManager {
   start(
-    players: IGamePlayersList,
+    players: IPlayersManager,
     goldPerRound: number,
     deck: IGameDeck
   ): Promise<void>,
@@ -66,7 +66,7 @@ export class Game {
 
   constructor(
       private deck: IGameDeck,
-      private players: IGamePlayersList,
+      private players: IPlayersManager,
       private roundsManager: IRoundsManager,
   ) {}
 
@@ -86,18 +86,18 @@ export class Game {
         .start(this.players, Game.GOLD_PER_ROUND, this.deck);
 
     return {
-      players: this.players.getDTOList(),
+      players: this.players.getPlayersList(),
     };
   }
 
   public getPlayers() {
-    return this.players.getDTOList();
+    return this.players.getPlayersList();
   }
 
   private setupPlayers() {
     this.players.setupPlayers({
       gold: Game.INITIAL_GOLD,
-      getRandomHand: () => this.deck.takeRandomHand(),
+      getHand: () => this.deck.takeRandomHand(),
     });
   }
 }

@@ -1,9 +1,17 @@
 import {DeckMock} from './DeckMock';
 import {
-  Game, IRoundsManager,
+  Game, IPlayersManager, IRoundsManager,
 } from './Game';
-import {GamePlayersListMock} from './GamePlayersListMock';
 
+class PlayersManagerMock implements IPlayersManager {
+  setupPlayers = jest.fn();
+  makeBattleCouples = jest.fn();
+  validatePlayers = jest.fn();
+  addPlayer = jest.fn();
+  disconnectPlayer = jest.fn();
+  getPlayersList = jest.fn();
+  makeCarouselCouples = jest.fn();
+}
 
 class RoundMomentsMock implements IRoundsManager {
   start = jest.fn();
@@ -12,7 +20,7 @@ class RoundMomentsMock implements IRoundsManager {
 const makeSut = () => {
   const deck = new DeckMock();
 
-  const playersList = new GamePlayersListMock();
+  const playersList = new PlayersManagerMock();
   const roundMoments = new RoundMomentsMock();
 
   const game = new Game(deck, playersList, roundMoments);

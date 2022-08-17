@@ -1,7 +1,12 @@
 import {NextApiRequest} from 'next';
 import {Game} from '../../domain/entities/Game/Game';
 import {GameDeck} from '../../domain/entities/Game/GameDeck/GameDeck';
-import {GamePlayersList} from '../../domain/entities/Game/GamePlayersList';
+import {
+  PlayersList,
+} from '../../domain/entities/Game/PlayersManager/PlayersList';
+import {
+  PlayersManager,
+} from '../../domain/entities/Game/PlayersManager/PlayersManager';
 import {Carousel} from '../../domain/entities/Game/RoundsManager/Carousel';
 import {
   GameCountdown,
@@ -76,9 +81,14 @@ export class GameFactory {
     const playersListDispatcher = new SocketIOPlayersListDispatcher(
         socketServer,
     );
-    const playersList = new GamePlayersList([], playersListDispatcher);
+    const playersList = new PlayersList();
+    const playersManager = new PlayersManager(
+        playersList, playersListDispatcher,
+    );
+
     const game = new Game(
-        deck, playersList, roundsManager);
+        deck, playersManager, roundsManager,
+    );
 
     GameFactory.game = game;
 

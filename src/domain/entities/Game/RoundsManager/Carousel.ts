@@ -1,4 +1,4 @@
-import {PlayerCoupleDTO} from '../GamePlayersList';
+import {PlayerCoupleDTO} from '../PlayersManager/PlayersList';
 import {IGameRoundMoment} from './RoundsManager';
 
 export interface IGameCountdown {
@@ -25,7 +25,7 @@ export interface DeckForCarousel {
   takeRandomCarouselBoard(): ICarouselBoard
 }
 
-export interface PlayersListForCarousel {
+export interface CarouselPlayerManager {
   makeCarouselCouples(): PlayerCoupleDTO[]
 }
 
@@ -47,13 +47,13 @@ export class Carousel implements IGameRoundMoment {
   ) {}
 
   async start(
-      playersList: PlayersListForCarousel, deck: DeckForCarousel,
+      playerManager: CarouselPlayerManager, deck: DeckForCarousel,
   ): Promise<void> {
     const unsubscribe = this.playersCountdown
         .subscribe(this.dispatch.releaseCountdownChange);
 
     const board = deck.takeRandomCarouselBoard();
-    const couples = playersList.makeCarouselCouples();
+    const couples = playerManager.makeCarouselCouples();
 
     this.dispatch.carouselStart(board);
 

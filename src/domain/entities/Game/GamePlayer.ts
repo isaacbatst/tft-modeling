@@ -1,5 +1,5 @@
 import {IHand} from './Game';
-import {IGamePlayer} from './GamePlayersList';
+import {IGamePlayer} from './PlayersManager/PlayersList';
 
 export class GamePlayer implements IGamePlayer {
   private id: string;

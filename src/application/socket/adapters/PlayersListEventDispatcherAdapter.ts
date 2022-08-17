@@ -3,7 +3,7 @@ import {
 } from '../../../domain/entities/Game/Game';
 import {
   PlayersListEventDispatcher,
-} from '../../../domain/entities/Game/GamePlayersList';
+} from '../../../domain/entities/Game/PlayersManager/PlayersList';
 import {GameSocketIoServer} from '../SocketServer';
 
 export class SocketIOPlayersListDispatcher implements

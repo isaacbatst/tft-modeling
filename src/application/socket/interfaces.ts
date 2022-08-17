@@ -1,7 +1,7 @@
 import {Socket} from 'socket.io';
 import {
   PlayersListEventDispatcher,
-} from '../../domain/entities/Game/GamePlayersList';
+} from '../../domain/entities/Game/PlayersManager/PlayersList';
 import {
   CarouselEventsDispatchers,
 } from '../../domain/entities/Game/RoundsManager/Carousel';
