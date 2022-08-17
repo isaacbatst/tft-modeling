@@ -1,5 +1,5 @@
 import {NextApiRequest} from 'next';
-import {GameFactory} from '../../application/factories/GameFactory';
+import {GameSingleton} from '../../application/factories/GameSingleton';
 import {NextApiResponseServerIO} from '../../application/socket/SocketServer';
 import {GamePlayerDTO} from '../../domain/entities/Game/Game';
 
@@ -13,7 +13,7 @@ export interface LobbyResponse {
 const handler = (req: NextApiRequest,
     res: NextApiResponseServerIO<LobbyResponse>) => {
   if (req.method === 'POST') {
-    const {game, token} = GameFactory.make(req, res);
+    const {game, token} = GameSingleton.make(req, res);
 
     return res.status(200).json(
         {

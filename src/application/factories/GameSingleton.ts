@@ -33,7 +33,7 @@ import {
 } from '../socket/SocketServer';
 import {GameSocketServerFactory} from './GameSocketServerFactory';
 
-export class GameFactory {
+export class GameSingleton {
   private static game: Game | null = null;
   private static socketServer: GameSocketIoServer | null = null;
 
@@ -42,11 +42,11 @@ export class GameFactory {
       res: NextApiResponseServerIO,
   ) {
     const socketServer = GameSocketServerFactory.make(res);
-    GameFactory.socketServer = socketServer;
+    GameSingleton.socketServer = socketServer;
 
-    const game = GameFactory.getGameInstance(socketServer);
+    const game = GameSingleton.getGameInstance(socketServer);
 
-    const token = GameFactory.handleConnectedUser(req, res, game);
+    const token = GameSingleton.handleConnectedUser(req, res, game);
     return {
       game,
       token,
@@ -54,8 +54,8 @@ export class GameFactory {
   }
 
   private static getGameInstance(socketServer: GameSocketIoServer) {
-    if (!GameFactory.game) {
-      const game = GameFactory.createGame(socketServer);
+    if (!GameSingleton.game) {
+      const game = GameSingleton.createGame(socketServer);
       const connectionEventsHandler = new GameConnectionEventsHandler(
           socketServer,
           game,
@@ -65,7 +65,7 @@ export class GameFactory {
       return game;
     }
 
-    return GameFactory.game;
+    return GameSingleton.game;
   }
 
   private static createGame(socketServer: GameSocketIoServer) {
@@ -96,7 +96,7 @@ export class GameFactory {
         deck, playersManager, roundsManager,
     );
 
-    GameFactory.game = game;
+    GameSingleton.game = game;
     return game;
   }
 
