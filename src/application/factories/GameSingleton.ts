@@ -22,11 +22,7 @@ export class GameSingleton {
 
     const game = GameSingleton.getGameInstance(socketServer);
 
-    const token = GameSingleton.handleConnectedUser(req, res, game);
-    return {
-      game,
-      token,
-    };
+    return game;
   }
 
   private static getGameInstance(socketServer: GameSocketIoServer) {
@@ -44,7 +40,7 @@ export class GameSingleton {
     return GameSingleton.game;
   }
 
-  private static handleConnectedUser(
+  public static handleConnectedUser(
       req: NextApiRequest, res: NextApiResponseServerIO,
       game: Game,
   ) {

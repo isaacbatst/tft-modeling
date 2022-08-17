@@ -15,7 +15,8 @@ export interface LobbyResponse {
 const handler = (req: NextApiRequest,
     res: NextApiResponseServerIO<LobbyResponse>) => {
   if (req.method === 'POST') {
-    const {game, token} = GameSingleton.getInstance(req, res);
+    const game = GameSingleton.getInstance(req, res);
+    const token = GameSingleton.handleConnectedUser(req, res, game);
 
     return res.status(200).json(
         {
