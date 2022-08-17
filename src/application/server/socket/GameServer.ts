@@ -1,16 +1,18 @@
-import {Game} from '../../../domain/entities/Game/Game';
+import {NextApiRequest} from 'next';
+import {Game, GamePlayerDTO} from '../../../domain/entities/Game/Game';
 import {CookiesHandler} from '../cookies/CookiesHandler';
 import {GameSocket} from './interfaces';
-import {GameSocketIoServer} from './SocketServer';
+import {GameSocketIoServer, NextApiResponseServerIO} from './SocketServer';
 
-export class GameConnectionEventsHandler {
+export class GameServer {
   constructor(
     private socketServer: GameSocketIoServer,
     private game: Game,
   ) {
+    this.addGameListeners();
   }
 
-  public addGameListeners() {
+  private addGameListeners() {
     this.socketServer
         .off('connection', this.handleConnection);
 
@@ -28,5 +30,18 @@ export class GameConnectionEventsHandler {
         this.game.handlePlayerDisconnected(id);
       }
     });
+  }
+
+  public handleConnectedUser(
+      req: NextApiRequest, res: NextApiResponseServerIO,
+  ) {
+    const token = CookiesHandler.findOrCreateCookie(req, res);
+    this.game.handlePlayerConnected(token);
+
+    return token;
+  }
+
+  public getPlayers(): GamePlayerDTO[] {
+    return this.game.getPlayers();
   }
 }

@@ -25,13 +25,13 @@ import {
   SocketIOPlayersListDispatcher,
 } from '../server/socket/adapters/PlayersListEventDispatcherAdapter';
 import {
-  GameConnectionEventsHandler,
-} from '../server/socket/GameConnectionEventsHandler';
+  GameServer,
+} from '../server/socket/GameServer';
 import {
   GameSocketIoServer,
 } from '../server/socket/SocketServer';
 
-export class GameFactory {
+export class GameServerFactory {
   static make(socketServer: GameSocketIoServer) {
     const carouselEventsDispatchers = new SocketIOCarouselEventsDispatcher(
         socketServer,
@@ -60,12 +60,11 @@ export class GameFactory {
         deck, playersManager, roundsManager,
     );
 
-    const connectionEventsHandler = new GameConnectionEventsHandler(
+    const gameServer = new GameServer(
         socketServer,
         game,
     );
-    connectionEventsHandler.addGameListeners();
 
-    return game;
+    return gameServer;
   }
 }

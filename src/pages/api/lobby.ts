@@ -1,5 +1,7 @@
 import {NextApiRequest} from 'next';
-import {GameSingleton} from '../../application/factories/GameSingleton';
+import {
+  GameServerSingleton,
+} from '../../application/factories/GameServerSingleton';
 import {
   SocketServerSingleton,
 } from '../../application/factories/SocketServerSingleton';
@@ -20,13 +22,13 @@ const handler = (req: NextApiRequest,
   try {
     if (req.method === 'POST') {
       const socketServer = SocketServerSingleton.getInstance(res);
-      const game = GameSingleton.getInstance(socketServer);
-      const token = GameSingleton.handleConnectedUser(req, res, game);
+      const gameServer = GameServerSingleton.getInstance(socketServer);
+      const token = gameServer.handleConnectedUser(req, res);
 
       return res.status(200).json(
           {
             game: {
-              players: game.getPlayers(),
+              players: gameServer.getPlayers(),
             },
             token,
           },
