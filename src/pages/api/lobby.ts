@@ -14,21 +14,25 @@ export interface LobbyResponse {
 
 const handler = (req: NextApiRequest,
     res: NextApiResponseServerIO<LobbyResponse>) => {
-  if (req.method === 'POST') {
-    const game = GameSingleton.getInstance(req, res);
-    const token = GameSingleton.handleConnectedUser(req, res, game);
+  try {
+    if (req.method === 'POST') {
+      const game = GameSingleton.getInstance(req, res);
+      const token = GameSingleton.handleConnectedUser(req, res, game);
 
-    return res.status(200).json(
-        {
-          game: {
-            players: game.getPlayers(),
+      return res.status(200).json(
+          {
+            game: {
+              players: game.getPlayers(),
+            },
+            token,
           },
-          token,
-        },
-    );
-  }
+      );
+    }
 
-  res.status(405).end();
+    res.status(405).end();
+  } catch (err) {
+    res.status(500).end();
+  }
 };
 
 export default handler;
