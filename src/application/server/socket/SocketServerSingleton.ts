@@ -1,6 +1,6 @@
 import {
   GameSocketIoServer, NextApiResponseServerIO,
-} from '../server/socket/SocketServer';
+} from './SocketServer';
 import {SocketServerFactory} from './SocketServerFactory';
 
 export class SocketServerSingleton {

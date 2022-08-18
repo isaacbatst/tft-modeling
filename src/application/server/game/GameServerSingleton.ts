@@ -1,4 +1,4 @@
-import {GameServer} from '../server/socket/GameServer';
+import {GameServer} from '../server/game/GameServer';
 import {
   GameSocketIoServer,
 } from '../server/socket/SocketServer';

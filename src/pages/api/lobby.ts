@@ -1,10 +1,10 @@
 import {NextApiRequest} from 'next';
 import {
   GameServerSingleton,
-} from '../../application/factories/GameServerSingleton';
+} from '../../application/server/game/GameServerSingleton';
 import {
   SocketServerSingleton,
-} from '../../application/factories/SocketServerSingleton';
+} from '../../application/server/socket/SocketServerSingleton';
 import {
   NextApiResponseServerIO,
 } from '../../application/server/socket/SocketServer';

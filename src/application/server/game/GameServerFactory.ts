@@ -1,35 +1,35 @@
-import {Game} from '../../domain/entities/Game/Game';
-import {GameDeck} from '../../domain/entities/Game/GameDeck/GameDeck';
+import {Game} from '../../../domain/entities/Game/Game';
+import {GameDeck} from '../../../domain/entities/Game/GameDeck/GameDeck';
 import {
   PlayersList,
-} from '../../domain/entities/Game/PlayersManager/PlayersList';
+} from '../../../domain/entities/Game/PlayersManager/PlayersList';
 import {
   PlayersManager,
-} from '../../domain/entities/Game/PlayersManager/PlayersManager';
+} from '../../../domain/entities/Game/PlayersManager/PlayersManager';
 import {
   Carousel,
-} from '../../domain/entities/Game/RoundsManager/Carousel';
+} from '../../../domain/entities/Game/RoundsManager/Carousel';
 import {
   GameCountdown,
-} from '../../domain/entities/Game/RoundsManager/GameCountdown';
+} from '../../../domain/entities/Game/RoundsManager/GameCountdown';
 import {
   GameRoundMomentsList,
-} from '../../domain/entities/Game/RoundsManager/GameRoundMomentsList';
+} from '../../../domain/entities/Game/RoundsManager/GameRoundMomentsList';
 import {
   RoundsManager,
-} from '../../domain/entities/Game/RoundsManager/RoundsManager';
+} from '../../../domain/entities/Game/RoundsManager/RoundsManager';
 import {
   SocketIOCarouselEventsDispatcher,
-} from '../server/socket/adapters/CarouselEventsDispatcherAdapter';
+} from '../socket/adapters/CarouselEventsDispatcherAdapter';
 import {
   SocketIOPlayersListDispatcher,
-} from '../server/socket/adapters/PlayersListEventDispatcherAdapter';
+} from '../socket/adapters/PlayersListEventDispatcherAdapter';
 import {
   GameServer,
-} from '../server/socket/GameServer';
+} from '../game/GameServer';
 import {
   GameSocketIoServer,
-} from '../server/socket/SocketServer';
+} from '../socket/SocketServer';
 
 export class GameServerFactory {
   static make(socketServer: GameSocketIoServer) {

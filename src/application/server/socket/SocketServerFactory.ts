@@ -4,8 +4,8 @@ import {
   ClientToServerEvents,
   InterServerEvents,
   ServerToClientEvents, SocketData,
-} from '../server/socket/interfaces';
-import {NextApiResponseServerIO} from '../server/socket/SocketServer';
+} from './interfaces';
+import {NextApiResponseServerIO} from './SocketServer';
 
 export class SocketServerFactory {
   public static make(res: NextApiResponseServerIO) {

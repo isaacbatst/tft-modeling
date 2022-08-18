@@ -1,8 +1,10 @@
 import {NextApiRequest} from 'next';
 import {Game, GamePlayerDTO} from '../../../domain/entities/Game/Game';
 import {CookiesHandler} from '../cookies/CookiesHandler';
-import {GameSocket} from './interfaces';
-import {GameSocketIoServer, NextApiResponseServerIO} from './SocketServer';
+import {GameSocket} from '../socket/interfaces';
+import {
+  GameSocketIoServer, NextApiResponseServerIO,
+} from '../socket/SocketServer';
 
 export class GameServer {
   constructor(
