@@ -15,9 +15,8 @@ export interface IPlayersList {
   setPlayersHand(getHand: () => IHand): void
 }
 
-export enum GamePlayersListErrors {
+export enum PlayersManagerStartErrors {
   BELLOW_MIN_PLAYERS = 'BELLOW_MIN_PLAYERS',
-  REPEATED_PLAYER = 'REPEATED_PLAYER'
 }
 
 export class PlayersManager implements IPlayersManager {
@@ -31,7 +30,7 @@ export class PlayersManager implements IPlayersManager {
 
   public validatePlayers(): void {
     if (this.playersList.getLength() < 2) {
-      throw new Error(GamePlayersListErrors.BELLOW_MIN_PLAYERS);
+      throw new Error(PlayersManagerStartErrors.BELLOW_MIN_PLAYERS);
     }
   }
 
@@ -85,5 +84,9 @@ export class PlayersManager implements IPlayersManager {
     }
 
     return couples;
+  }
+
+  public getById(id: string): GamePlayerDTO | null {
+    return this.playersList.findById(id);
   }
 }

@@ -11,6 +11,7 @@ class PlayersManagerMock implements IPlayersManager {
   disconnectPlayer = jest.fn();
   getPlayersList = jest.fn();
   makeCarouselCouples = jest.fn();
+  getById = jest.fn();
 }
 
 class RoundMomentsMock implements IRoundsManager {
@@ -35,14 +36,14 @@ describe('Game', () => {
     it('should call playersList setup', () => {
       const {game, playersList} = makeSut();
 
-      game.start();
+      game.start('any-id');
 
       expect(playersList.setupPlayers).toBeCalled();
     });
 
     it('should call roundMoments start', async () => {
       const {game, roundMoments} = makeSut();
-      await game.start();
+      await game.start('any-id');
 
       expect(roundMoments.start).toBeCalled();
     });

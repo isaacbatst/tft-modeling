@@ -10,13 +10,9 @@ export class CookiesHandler {
     return cookie.parse(str, options);
   }
 
-  static findOrCreateCookie(
+  static createCookie(
       req: NextApiRequest, res: NextApiResponseServerIO,
-  ): string {
-    const parsed = cookie.parse(req.headers.cookie as string || '');
-    if (parsed[CookiesHandler.COOKIE_NAME]) {
-      return parsed[CookiesHandler.COOKIE_NAME];
-    }
+  ) {
     const token = randomUUID();
     const serialized = cookie.serialize(CookiesHandler.COOKIE_NAME, token, {
       path: '/',
@@ -30,5 +26,16 @@ export class CookiesHandler {
     );
 
     return token;
+  }
+
+  static findCookie(
+      req: NextApiRequest,
+  ): string | null {
+    const parsed = cookie.parse(req.headers.cookie as string || '');
+    if (!parsed[CookiesHandler.COOKIE_NAME]) {
+      return null;
+    }
+
+    return parsed[CookiesHandler.COOKIE_NAME];
   };
 }

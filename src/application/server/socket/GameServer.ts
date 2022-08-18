@@ -32,10 +32,17 @@ export class GameServer {
     });
   }
 
+  public getUserToken(req: NextApiRequest): string | null {
+    return CookiesHandler.findCookie(req);
+  }
+
   public handleConnectedUser(
       req: NextApiRequest, res: NextApiResponseServerIO,
-  ) {
-    const token = CookiesHandler.findOrCreateCookie(req, res);
+  ): string {
+    const token = CookiesHandler.findCookie(req) ||
+      CookiesHandler.createCookie(req, res);
+
+
     this.game.handlePlayerConnected(token);
 
     return token;
@@ -43,5 +50,9 @@ export class GameServer {
 
   public getPlayers(): GamePlayerDTO[] {
     return this.game.getPlayers();
+  }
+
+  public startGame(id: string): void {
+    this.game.start(id);
   }
 }

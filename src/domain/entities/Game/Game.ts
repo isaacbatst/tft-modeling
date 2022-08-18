@@ -38,6 +38,7 @@ export interface IPlayersManager extends CarouselPlayerManager {
   addPlayer(id: string): void;
   disconnectPlayer(id: string): void
   getPlayersList(): GamePlayerDTO[];
+  getById(id: string): GamePlayerDTO | null;
   setupPlayers(setup: {
     gold: number,
     getHand: () => IHand,
@@ -60,6 +61,11 @@ export interface GamePlayerDTO {
   isOwner: boolean
 }
 
+enum GameStartErrors {
+  PLAYER_NOT_FOUND = 'PLAYER_NOT_FOUND',
+  PLAYER_IS_NOT_LOBBY_OWNER = 'PLAYER_IS_NOT_LOBBY_OWNER'
+}
+
 export class Game {
   private static INITIAL_GOLD = 3;
   private static GOLD_PER_ROUND = 5;
@@ -78,7 +84,17 @@ export class Game {
     this.players.disconnectPlayer(id);
   }
 
-  public async start() {
+  public async start(id: string) {
+    const player = this.players.getById(id);
+
+    if (!player) {
+      throw new Error(GameStartErrors.PLAYER_NOT_FOUND);
+    }
+
+    if (!player.isOwner) {
+      throw new Error(GameStartErrors.PLAYER_IS_NOT_LOBBY_OWNER);
+    }
+
     this.players.validatePlayers();
     this.setupPlayers();
 

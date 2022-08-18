@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {NextPage} from 'next';
 import {useLobby} from '../application/frontend/hooks/useLobby';
 
@@ -7,6 +8,14 @@ const HomePage: NextPage = () => {
     token,
     playersList,
   } = useLobby();
+
+  const handleStart = async () => {
+    try {
+      await axios.post('/api/start');
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const player = playersList.find((player) => player.id === token);
 
@@ -33,7 +42,10 @@ const HomePage: NextPage = () => {
             }
             {
               player && player.isOwner && (
-                <button className='border-2 px-5 py-1'>Iniciar</button>
+                <button
+                  className='border-2 px-5 py-1'
+                  onClick={handleStart}
+                >Iniciar</button>
               )
             }
           </div>
