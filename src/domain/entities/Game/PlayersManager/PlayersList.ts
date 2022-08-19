@@ -96,7 +96,7 @@ export class PlayersList implements IPlayersList {
     this.dispatchPlayersUpdate();
   }
 
-  incrementPlayersGold(
+  public incrementPlayersGold(
       getIncrement: (player: { gold: number }) => number,
   ): void {
     this.players.forEach((player) => {
@@ -108,6 +108,8 @@ export class PlayersList implements IPlayersList {
 
       player.setGold(currentGold + increment);
     });
+
+    this.dispatchPlayersUpdate();
   }
 
   private dispatchPlayersUpdate() {
