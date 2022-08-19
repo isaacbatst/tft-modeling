@@ -54,7 +54,7 @@ export class GameServer {
     return this.game.getPlayers();
   }
 
-  public startGame(id: string): void {
-    this.game.start(id);
+  public startGame(id: string): Promise<void> {
+    return this.game.start(id);
   }
 }

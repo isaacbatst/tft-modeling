@@ -8,6 +8,7 @@ export class GameServerSingleton {
   static getInstance(
       socketServer: GameSocketIoServer,
   ) {
+    console.log('game server', this.gameServer);
     if (!GameServerSingleton.gameServer) {
       const gameServer = GameServerFactory.make(socketServer);
       GameServerSingleton.gameServer = gameServer;

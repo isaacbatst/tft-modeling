@@ -7,6 +7,8 @@ const HomePage: NextPage = () => {
     connected,
     token,
     playersList,
+    roundManager,
+    carousel,
   } = useLobby();
 
   const handleStart = async () => {
@@ -22,6 +24,44 @@ const HomePage: NextPage = () => {
   return (
     <div>
       <h1>TFT</h1>
+      {
+        roundManager ? (
+          <div>
+            <div>
+              {
+                roundManager.stageRounds
+                    .map((round) => <div>{round.name}</div>)
+              }
+            </div>
+            <div>Agora: {roundManager.stage} - {roundManager.round}</div>
+          </div>
+        ) : (
+          <div>Aguardando para começar...</div>
+        )
+      }
+      {
+        carousel && (
+          <div>
+            <h2>Carrossel</h2>
+            <div>
+              <h3>Personagens</h3>
+              {
+                carousel.board.map((character) => (
+                  <div>{character.character.name} - {character.item.name}</div>
+                ))
+              }
+            </div>
+            <div>
+              <h3>Duplas</h3>
+              {
+                carousel?.couples.map(([player1, player2]) => (
+                  <div>{player1.id} e {player2.id}</div>
+                ))
+              }
+            </div>
+          </div>
+        )
+      }
       {
         connected ?
         (

@@ -9,21 +9,27 @@ import {
   NextApiResponseServerIO,
 } from '../../application/server/socket/SocketServer';
 
-const handler = (req: NextApiRequest, res: NextApiResponseServerIO) => {
-  if (req.method !== 'POST') {
-    return res.status(405).end();
+const handler = async (req: NextApiRequest, res: NextApiResponseServerIO) => {
+  try {
+    if (req.method !== 'POST') {
+      return res.status(405).end();
+    }
+
+    const socketServer = SocketServerSingleton.getInstance(res);
+    console.log('starting game');
+    const gameServer = GameServerSingleton.getInstance(socketServer);
+    const token = gameServer.getUserToken(req);
+
+    if (!token) {
+      return res.status(405).end();
+    }
+
+    await gameServer.startGame(token);
+    return res.status(200).end();
+  } catch (err) {
+    console.error(err);
+    return res.status(500).end();
   }
-
-  const socketServer = SocketServerSingleton.getInstance(res);
-  const gameServer = GameServerSingleton.getInstance(socketServer);
-  const token = gameServer.getUserToken(req);
-
-  if (!token) {
-    return res.status(405).end();
-  }
-
-  gameServer.startGame(token);
-  return res.status(200).end();
 };
 
 export default handler;

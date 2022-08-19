@@ -90,7 +90,6 @@ export class Game {
 
   public async start(id: string) {
     const player = this.players.getById(id);
-
     if (!player) {
       throw new Error(GameStartErrors.PLAYER_NOT_FOUND);
     }
@@ -102,12 +101,12 @@ export class Game {
     this.players.validatePlayers();
     this.setupPlayers();
 
-    await this.roundsManager
+    this.roundsManager
         .start(this.players, Game.GOLD_PER_ROUND, this.deck);
 
-    return {
-      players: this.players.getPlayersList(),
-    };
+    // return {
+    //   players: this.players.getPlayersList(),
+    // };
   }
 
   public getPlayers() {

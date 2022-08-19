@@ -20,22 +20,23 @@ export interface LobbyResponse {
 const handler = (req: NextApiRequest,
     res: NextApiResponseServerIO<LobbyResponse>) => {
   try {
-    if (req.method === 'POST') {
-      const socketServer = SocketServerSingleton.getInstance(res);
-      const gameServer = GameServerSingleton.getInstance(socketServer);
-      const token = gameServer.handleConnectedUser(req, res);
-
-      return res.status(200).json(
-          {
-            game: {
-              players: gameServer.getPlayers(),
-            },
-            token,
-          },
-      );
+    if (req.method !== 'POST') {
+      return res.status(405).end();
     }
 
-    res.status(405).end();
+    const socketServer = SocketServerSingleton.getInstance(res);
+    console.log('entering lobby');
+    const gameServer = GameServerSingleton.getInstance(socketServer);
+    const token = gameServer.handleConnectedUser(req, res);
+
+    return res.status(200).json(
+        {
+          game: {
+            players: gameServer.getPlayers(),
+          },
+          token,
+        },
+    );
   } catch (err) {
     res.status(500).end();
   }
