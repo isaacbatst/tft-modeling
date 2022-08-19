@@ -1,7 +1,5 @@
-import {GameServer} from '../server/game/GameServer';
-import {
-  GameSocketIoServer,
-} from '../server/socket/SocketServer';
+import {GameSocketIoServer} from '../socket/SocketServer';
+import {GameServer} from './GameServer';
 import {GameServerFactory} from './GameServerFactory';
 
 export class GameServerSingleton {
