@@ -42,7 +42,11 @@ export interface IPlayersManager extends CarouselPlayerManager {
   setupPlayers(setup: {
     gold: number,
     getHand: () => IHand,
-  }): void
+  }): void;
+  refillToNextRound(
+    baseGold: number,
+    getHand: () => IHand
+  ): void;
 }
 
 export interface IRoundsManager {

@@ -12,6 +12,7 @@ class PlayersManagerMock implements IPlayersManager {
   getPlayersList = jest.fn();
   makeCarouselCouples = jest.fn();
   getById = jest.fn();
+  refillToNextRound = jest.fn();
 }
 
 class RoundMomentsMock implements IRoundsManager {

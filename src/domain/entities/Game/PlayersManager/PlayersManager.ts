@@ -13,6 +13,9 @@ export interface IPlayersList {
   setPlayerConnected(id: string, connected?: boolean): void
   setPlayersGoldTo(value: number): void
   setPlayersHand(getHand: () => IHand): void
+  incrementPlayersGold(
+    getIncrement: (player: { gold: number }) => number
+  ): void;
 }
 
 export enum PlayersManagerStartErrors {
@@ -88,5 +91,16 @@ export class PlayersManager implements IPlayersManager {
 
   public getById(id: string): GamePlayerDTO | null {
     return this.playersList.findById(id);
+  }
+
+  public refillToNextRound(baseGold: number, getHand: () => IHand): void {
+    this.playersList.setPlayersHand(getHand);
+    this.playersList.incrementPlayersGold((player) => {
+      return this.getEconomyGold(player.gold) + baseGold;
+    });
+  }
+
+  private getEconomyGold(gold: number): number {
+    return Math.floor(gold / 10);
   }
 }

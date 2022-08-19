@@ -96,6 +96,20 @@ export class PlayersList implements IPlayersList {
     this.dispatchPlayersUpdate();
   }
 
+  incrementPlayersGold(
+      getIncrement: (player: { gold: number }) => number,
+  ): void {
+    this.players.forEach((player) => {
+      const currentGold = player.getGold();
+
+      const increment = getIncrement({
+        gold: currentGold,
+      });
+
+      player.setGold(currentGold + increment);
+    });
+  }
+
   private dispatchPlayersUpdate() {
     this.dispatch.playersUpdated(this.players.map(this.toDTO));
   }

@@ -1,8 +1,8 @@
-import {IGameDeck, IGamePlayersList, IRoundsManager} from '../Game';
+import {IGameDeck, IPlayersManager, IRoundsManager} from '../Game';
 
 
 export interface IGameRoundMoment {
-  start(players: IGamePlayersList, deck: IGameDeck): Promise<void>
+  start(players: IPlayersManager, deck: IGameDeck): Promise<void>
 }
 export interface IGameRoundMomentsList {
   getAll(): IGameRoundMoment[],
@@ -25,7 +25,7 @@ export class RoundsManager implements IRoundsManager {
   }
 
   async start(
-      players: IGamePlayersList,
+      players: IPlayersManager,
       goldPerRound: number,
       deck: IGameDeck,
   ):
@@ -48,7 +48,7 @@ export class RoundsManager implements IRoundsManager {
   }
 
   private setNextRound(
-      players: IGamePlayersList,
+      players: IPlayersManager,
       goldPerRound: number,
       deck: IGameDeck,
   ) {
@@ -60,16 +60,15 @@ export class RoundsManager implements IRoundsManager {
   }
 
   private refillPlayers(
-      players: IGamePlayersList,
+      players: IPlayersManager,
       goldPerRound: number,
       deck: IGameDeck,
   ) {
-    players.getAll().forEach((player) => {
-      player.incrementGold(goldPerRound);
-
-      const hand = deck.takeRandomHand();
-      player.setHand(hand);
-    });
+    // use playersmanager interface
+    players.refillToNextRound(
+        goldPerRound,
+        () => deck.takeRandomHand(),
+    );
   }
 
   private getNextRound(): { round: number, stage: number } {
@@ -97,9 +96,9 @@ export class RoundsManager implements IRoundsManager {
     };
   }
 
-  private checkIfShouldStop(playersList: IGamePlayersList): boolean {
-    const players = playersList.getAll();
-    const remainingPlayers = players.filter((player) => player.getLife() > 0);
+  private checkIfShouldStop(playersList: IPlayersManager): boolean {
+    const players = playersList.getPlayersList();
+    const remainingPlayers = players.filter((player) => player.life > 0);
     const isOnlyOnePlayerRemaining = remainingPlayers.length < 2;
 
     const lastStage = this.moments.getLastStage();
