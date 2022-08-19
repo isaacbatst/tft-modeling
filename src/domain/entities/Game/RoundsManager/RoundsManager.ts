@@ -1,18 +1,26 @@
 import {IGameDeck, IPlayersManager, IRoundsManager} from '../Game';
+import {IGameRoundMoment} from './GameRoundMomentsList';
 
-
-export interface IGameRoundMoment {
-  start(players: IPlayersManager, deck: IGameDeck): Promise<void>
-}
 export interface IGameRoundMomentsList {
   getAll(): IGameRoundMoment[],
   getLastStage(): number
-  getStageRounds(stage: number): number
+  getStageRounds(stage: number): number,
+  getStageRoundsNames(stage: number): { name: string }[]
 }
 
 export enum GameRoundMomentsErrors {
   INVALID_ROUND_FOR_STAGE = 'INVALID_ROUND_FOR_STAGE',
   INVALID_STAGE_AFTER_LAST = 'INVALID_STAGE_AFTER_LAST'
+}
+
+export interface RoundManagerState {
+  stage: number;
+  round: number;
+  stageRounds: { name: string }[]
+}
+
+export interface RoundsManagerEventsDispatcher {
+  roundStart(state: RoundManagerState): void
 }
 
 export class RoundsManager implements IRoundsManager {
@@ -21,6 +29,7 @@ export class RoundsManager implements IRoundsManager {
 
   constructor(
     private moments: IGameRoundMomentsList,
+    private dispatcher: RoundsManagerEventsDispatcher,
   ) {
   }
 
@@ -36,6 +45,8 @@ export class RoundsManager implements IRoundsManager {
     const moments = this.moments.getAll();
 
     for (let index = 0; index < moments.length; index += 1) {
+      this.dispatchRoundStart();
+
       const moment = moments[index];
       await moment.start(players, deck);
 
@@ -45,6 +56,14 @@ export class RoundsManager implements IRoundsManager {
 
       this.setNextRound(players, goldPerRound, deck);
     }
+  }
+
+  private dispatchRoundStart() {
+    this.dispatcher.roundStart({
+      round: this.round,
+      stage: this.stage,
+      stageRounds: this.moments.getStageRoundsNames(this.stage),
+    });
   }
 
   private setNextRound(

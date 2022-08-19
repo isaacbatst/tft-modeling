@@ -19,14 +19,17 @@ import {
   RoundsManager,
 } from '../../../domain/entities/Game/RoundsManager/RoundsManager';
 import {
+  GameServer,
+} from '../game/GameServer';
+import {
   SocketIOCarouselEventsDispatcher,
 } from '../socket/adapters/CarouselEventsDispatcherAdapter';
 import {
   SocketIOPlayersListDispatcher,
 } from '../socket/adapters/PlayersListEventDispatcherAdapter';
 import {
-  GameServer,
-} from '../game/GameServer';
+  SocketIoRoundManagerEventsDispatcher,
+} from '../socket/adapters/RoundManagerEventsDispatcher';
 import {
   GameSocketIoServer,
 } from '../socket/SocketServer';
@@ -46,7 +49,13 @@ export class GameServerFactory {
         1,
         [1],
     );
-    const roundsManager = new RoundsManager(momentsList);
+    const roundsManagerDispatcher = new SocketIoRoundManagerEventsDispatcher(
+        socketServer,
+    );
+    const roundsManager = new RoundsManager(
+        momentsList,
+        roundsManagerDispatcher,
+    );
     const deck = new GameDeck();
     const playersListDispatcher = new SocketIOPlayersListDispatcher(
         socketServer,

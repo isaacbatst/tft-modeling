@@ -5,10 +5,14 @@ import {
 import {
   CarouselEventsDispatchers,
 } from '../../../domain/entities/Game/RoundsManager/Carousel';
+import {
+  RoundsManagerEventsDispatcher,
+} from '../../../domain/entities/Game/RoundsManager/RoundsManager';
 
 export interface ServerToClientEvents extends
   CarouselEventsDispatchers,
-  PlayersListEventDispatcher {
+  PlayersListEventDispatcher,
+  RoundsManagerEventsDispatcher {
 }
 
 export interface ClientToServerEvents {

@@ -1,5 +1,5 @@
 import {PlayerCoupleDTO} from '../PlayersManager/PlayersList';
-import {IGameRoundMoment} from './RoundsManager';
+import {IGameRoundMoment} from './GameRoundMomentsList';
 
 export interface IGameCountdown {
   subscribe(callback: (time: number) => void): () => void;
@@ -36,12 +36,17 @@ export interface CarouselEventsDispatchers {
 export class Carousel implements IGameRoundMoment {
   static FINAL_COUNTDOWN_TIME = 5;
   static PLAYERS_COUNTDOWN_TIME = 5;
+  private static NAME = 'Escolha Compartilhada';
 
   constructor(
     private finalCountdown: IGameCountdown,
     private playersCountdown: IGameCountdown,
     private dispatch: CarouselEventsDispatchers,
   ) {}
+
+  public getName(): string {
+    return Carousel.NAME;
+  }
 
   async start(
       playerManager: CarouselPlayerManager, deck: DeckForCarousel,

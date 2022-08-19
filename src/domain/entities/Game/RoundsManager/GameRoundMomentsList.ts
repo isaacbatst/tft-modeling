@@ -1,8 +1,9 @@
-import {IGameDeck, IGamePlayersList} from '../Game';
+import {IGameDeck, IPlayersManager} from '../Game';
 import {IGameRoundMomentsList} from './RoundsManager';
 
 export interface IGameRoundMoment {
-  start(players: IGamePlayersList, deck: IGameDeck): Promise<void>
+  start(players: IPlayersManager, deck: IGameDeck): Promise<void>
+  getName(): string
 }
 
 enum GameRoundMomentsErrors {
@@ -44,6 +45,24 @@ export class GameRoundMomentsList implements IGameRoundMomentsList {
 
   public getAll(): IGameRoundMoment[] {
     return this.moments;
+  }
+
+  public getStageRoundsNames(stage: number): { name: string; }[] {
+    return this.getStageMoments(stage)
+        .map((moment) => ({name: moment.getName()}));
+  }
+
+  private getStageMoments(stage: number): IGameRoundMoment[] {
+    let start = 0;
+
+    for (let index = (stage - 1); index >= 0; index -= 1) {
+      start += this.roundsPerStage[index];
+    }
+
+    const end = start + this.roundsPerStage[stage];
+
+    return this.moments
+        .slice(start, end);
   }
 
   private validateLastStage(lastStage: number) {
