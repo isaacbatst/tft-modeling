@@ -4,7 +4,7 @@ import {
 } from '../Game';
 import {GamePlayer} from '../GamePlayer';
 
-import {IPlayersList} from './PlayersManager';
+import {IPlayersRepository} from './PlayersManager';
 
 export enum PlayersListErrors {
   BELLOW_MIN_PLAYERS = 'BELLOW_MIN_PLAYERS',
@@ -33,7 +33,7 @@ export type PlayerCouple = [IGamePlayer, IGamePlayer];
 
 export type PlayerCoupleDTO = [GamePlayerDTO, GamePlayerDTO];
 
-export class PlayersList implements IPlayersList {
+export class PlayersList implements IPlayersRepository {
   constructor(
     private dispatch: PlayersListEventDispatcher,
     private players: IGamePlayer[] = [],

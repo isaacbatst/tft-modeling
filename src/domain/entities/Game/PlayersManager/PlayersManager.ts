@@ -5,7 +5,7 @@ import {
   PlayerCoupleDTO,
 } from './PlayersList';
 
-export interface IPlayersList {
+export interface IPlayersRepository {
   findById(id: string): GamePlayerDTO | null,
   getAll(): GamePlayerDTO[]
   add(props: { id: string, isOwner?: boolean }): void
@@ -24,7 +24,7 @@ export enum PlayersManagerStartErrors {
 
 export class PlayersManager implements IPlayersManager {
   constructor(
-    private playersList: IPlayersList,
+    private playersList: IPlayersRepository,
   ) {}
 
   public makeBattleCouples(): PlayerCoupleDTO[] {
