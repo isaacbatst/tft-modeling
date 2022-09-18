@@ -7,16 +7,16 @@ class PlayersManagerMock implements IPlayersManager {
   setupPlayers = jest.fn();
   makeBattleCouples = jest.fn();
   validatePlayers = jest.fn();
-  addPlayer = jest.fn();
+  connectPlayer = jest.fn();
   disconnectPlayer = jest.fn();
-  getPlayersList = jest.fn();
+  getPlayers = jest.fn();
   makeCarouselCouples = jest.fn();
   getById = jest.fn();
   refillToNextRound = jest.fn();
 }
 
 class RoundMomentsMock implements IRoundsManager {
-  start = jest.fn();
+  startMoments = jest.fn();
 }
 
 const makeSut = () => {
@@ -46,7 +46,7 @@ describe('Game', () => {
       const {game, roundMoments} = makeSut();
       await game.start('any-id');
 
-      expect(roundMoments.start).toBeCalled();
+      expect(roundMoments.startMoments).toBeCalled();
     });
   });
 });

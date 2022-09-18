@@ -1,6 +1,6 @@
 import {PlayerCoupleDTO} from '../PlayersManager/PlayersList';
 import {
-  Carousel, CarouselEventsDispatchers, CarouselPlayerManager, DeckForCarousel,
+  Carousel, CarouselEventsDispatchers, CarouselStartPlayerManager, DeckForCarousel,
 } from './Carousel';
 import {CountdownMock} from './GameCountdownMock';
 
@@ -16,7 +16,7 @@ class DispatchMock implements CarouselEventsDispatchers {
   releaseCountdownChange = jest.fn();
 }
 
-class PlayersManagerMock implements CarouselPlayerManager {
+class PlayersManagerMock implements CarouselStartPlayerManager {
   player1 = {
     id: 'any-string',
     life: 100,

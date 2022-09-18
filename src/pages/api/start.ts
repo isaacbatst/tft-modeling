@@ -1,13 +1,11 @@
 import {NextApiRequest} from 'next';
-import {
-  GameServerSingleton,
-} from '../../application/server/game/GameServerSingleton';
-import {
-  SocketServerSingleton,
-} from '../../application/server/socket/SocketServerSingleton';
+import {CookiesHandler} from '../../application/server/cookies/CookiesHandler';
 import {
   NextApiResponseServerIO,
 } from '../../application/server/socket/SocketServer';
+import {
+  GameStartService,
+} from '../../domain/usecases/GameStart/GameStartService';
 
 const handler = async (req: NextApiRequest, res: NextApiResponseServerIO) => {
   try {
@@ -15,16 +13,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponseServerIO) => {
       return res.status(405).end();
     }
 
-    const socketServer = SocketServerSingleton.getInstance(res);
-    console.log('starting game');
-    const gameServer = GameServerSingleton.getInstance(socketServer);
-    const token = gameServer.getUserToken(req);
+    const token = CookiesHandler.findCookie(req);
 
     if (!token) {
-      return res.status(405).end();
+      return res.status(401).end();
     }
 
-    await gameServer.startGame(token);
+    const service = new GameStartService();
+
+    await service.execute(token);
     return res.status(200).end();
   } catch (err) {
     console.error(err);

@@ -6,8 +6,8 @@ import {
   CarouselState,
 } from '../../../domain/entities/Game/RoundsManager/Carousel';
 import {
-  RoundManagerState,
-} from '../../../domain/entities/Game/RoundsManager/RoundsManager';
+  RoundsManagerState,
+} from '../../../domain/usecases/GameStart/GameMoments';
 import {LobbyResponse} from '../../../pages/api/lobby';
 import {SocketClient} from '../../server/socket/SocketClient';
 
@@ -17,7 +17,7 @@ export const useLobby = () => {
   const [token, setToken] = useState<string | null>(null);
   const [
     roundManager, setRoundManager,
-  ] = useState<RoundManagerState | null>(null);
+  ] = useState<RoundsManagerState | null>(null);
   const [carousel, setCarousel] = useState<CarouselState | null>(null);
 
   useEffect(() => {

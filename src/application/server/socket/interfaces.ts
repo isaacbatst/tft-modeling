@@ -7,7 +7,7 @@ import {
 } from '../../../domain/entities/Game/RoundsManager/Carousel';
 import {
   RoundsManagerEventsDispatcher,
-} from '../../../domain/entities/Game/RoundsManager/RoundsManager';
+} from '../../../domain/usecases/GameStart/GameMoments';
 
 export interface ServerToClientEvents extends
   CarouselEventsDispatchers,

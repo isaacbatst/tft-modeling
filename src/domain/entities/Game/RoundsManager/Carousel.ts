@@ -1,3 +1,4 @@
+import {GamePlayerDTO} from '../Game';
 import {PlayerCoupleDTO} from '../PlayersManager/PlayersList';
 import {IGameRoundMoment} from './GameRoundMomentsList';
 
@@ -18,7 +19,7 @@ export interface DeckForCarousel {
   takeRandomCarouselBoard(): ICarouselBoard
 }
 
-export interface CarouselPlayerManager {
+export interface CarouselStartPlayerManager {
   makeCarouselCouples(): PlayerCoupleDTO[]
 }
 
@@ -39,8 +40,7 @@ export class Carousel implements IGameRoundMoment {
   private static NAME = 'Escolha Compartilhada';
 
   constructor(
-    private finalCountdown: IGameCountdown,
-    private playersCountdown: IGameCountdown,
+    private countdown: IGameCountdown,
     private dispatch: CarouselEventsDispatchers,
   ) {}
 
@@ -48,12 +48,26 @@ export class Carousel implements IGameRoundMoment {
     return Carousel.NAME;
   }
 
-  async start(
-      playerManager: CarouselPlayerManager, deck: DeckForCarousel,
+  public async start(
+      players: GamePlayerDTO[], deck: DeckForCarousel,
   ): Promise<void> {
     const board = deck.takeRandomCarouselBoard();
-    const couples = playerManager.makeCarouselCouples();
+    const couples = this.makeCouplesByLife(players);
 
+    await this.releaseCouples(couples, board);
+
+    await this.countdown.start(Carousel.FINAL_COUNTDOWN_TIME);
+
+    this.dispatch.carouselEnd({
+      releaseIndex: couples.length - 1,
+      board: board.getAll(),
+      couples,
+    });
+  }
+
+  private async releaseCouples(
+      couples: PlayerCoupleDTO[], board: ICarouselBoard,
+  ) {
     for (let index = 0; index < couples.length; index += 1) {
       this.dispatch.releasePlayers({
         releaseIndex: index,
@@ -61,16 +75,38 @@ export class Carousel implements IGameRoundMoment {
         couples,
       });
 
-      await this.playersCountdown
+      await this.countdown
           .start(Carousel.PLAYERS_COUNTDOWN_TIME);
     }
+  }
 
-    await this.finalCountdown.start(Carousel.FINAL_COUNTDOWN_TIME);
+  private makeCouplesByLife(players: GamePlayerDTO[]): PlayerCoupleDTO[] {
+    const playersSortedByLife = this.sortPlayersByLife(players);
+    const couples = this.makeCouples(playersSortedByLife);
 
-    this.dispatch.carouselEnd({
-      releaseIndex: couples.length - 1,
-      board: board.getAll(),
-      couples,
-    });
+    return couples;
+  }
+
+  private makeCouples(players: GamePlayerDTO[]): PlayerCoupleDTO[] {
+    const couples: PlayerCoupleDTO[] = [];
+
+    for (let index = 0; index < players.length; index += 2) {
+      const player = players[index];
+      const nextPlayer = players[index + 1];
+
+      // TODO should handle "player shadow" strategy
+      if (nextPlayer) {
+        couples.push([player, nextPlayer]);
+      }
+    }
+
+    return couples;
+  }
+
+  private sortPlayersByLife(players: GamePlayerDTO[]): GamePlayerDTO[] {
+    return players.slice()
+        .sort((a, b) => {
+          return a.life - b.life;
+        });
   }
 }

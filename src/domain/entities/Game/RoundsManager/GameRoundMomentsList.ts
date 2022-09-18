@@ -1,8 +1,8 @@
-import {IGameDeck, IPlayersManager} from '../Game';
-import {IGameRoundMomentsList} from './RoundsManager';
+import {IGameMomentsList} from '../../../usecases/GameStart/GameMoments';
+import {GamePlayerDTO, IGameDeck} from '../Game';
 
 export interface IGameRoundMoment {
-  start(players: IPlayersManager, deck: IGameDeck): Promise<void>
+  start(players: GamePlayerDTO[], deck: IGameDeck): Promise<void>
   getName(): string
 }
 
@@ -17,7 +17,7 @@ export interface RoundManager {
   getNextRound(round: number, stage: number, lastStage: number): Promise<void>
 }
 
-export class GameRoundMomentsList implements IGameRoundMomentsList {
+export class GameRoundMomentsList implements IGameMomentsList {
   private lastStage: number;
   private roundsPerStage: number[];
   private moments: IGameRoundMoment[];

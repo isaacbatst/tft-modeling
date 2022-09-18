@@ -11,7 +11,7 @@ export class CookiesHandler {
   }
 
   static createCookie(
-      req: NextApiRequest, res: NextApiResponseServerIO,
+      res: NextApiResponseServerIO,
   ) {
     const token = randomUUID();
     const serialized = cookie.serialize(CookiesHandler.COOKIE_NAME, token, {

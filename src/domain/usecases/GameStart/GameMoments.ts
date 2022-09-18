@@ -1,7 +1,12 @@
-import {IGameDeck, IPlayersManager, IRoundsManager} from '../Game';
-import {IGameRoundMoment} from './GameRoundMomentsList';
+import {
+  GamePlayerDTO,
+  IGameDeck, IRoundsManager, RoundManagerStartRepository,
+} from '../../entities/Game/Game';
+import {
+  IGameRoundMoment,
+} from '../../entities/Game/RoundsManager/GameRoundMomentsList';
 
-export interface IGameRoundMomentsList {
+export interface IGameMomentsList {
   getAll(): IGameRoundMoment[],
   getLastStage(): number
   getStageRounds(stage: number): number,
@@ -13,14 +18,18 @@ export enum GameRoundMomentsErrors {
   INVALID_STAGE_AFTER_LAST = 'INVALID_STAGE_AFTER_LAST'
 }
 
-export interface RoundManagerState {
+export interface Round {
+  name: string
+}
+
+export interface RoundsManagerState {
   stage: number;
   round: number;
-  stageRounds: { name: string }[]
+  stageRounds: Round[]
 }
 
 export interface RoundsManagerEventsDispatcher {
-  roundStart(state: RoundManagerState): void
+  roundStart(state: RoundsManagerState): void
 }
 
 export class RoundsManager implements IRoundsManager {
@@ -28,14 +37,13 @@ export class RoundsManager implements IRoundsManager {
   private round = 0;
 
   constructor(
-    private moments: IGameRoundMomentsList,
+    private moments: IGameMomentsList,
     private dispatcher: RoundsManagerEventsDispatcher,
+    private repository: RoundManagerStartRepository,
   ) {
   }
 
-  async start(
-      players: IPlayersManager,
-      goldPerRound: number,
+  async startMoments(
       deck: IGameDeck,
   ):
       Promise<void> {
@@ -48,13 +56,16 @@ export class RoundsManager implements IRoundsManager {
       this.dispatchRoundStart();
 
       const moment = moments[index];
+
+      const players = await this.repository.getPlayers();
+
       await moment.start(players, deck);
 
       if (this.checkIfShouldStop(players)) {
         break;
       }
 
-      this.setNextRound(players, goldPerRound, deck);
+      this.setNextRound();
     }
   }
 
@@ -66,28 +77,10 @@ export class RoundsManager implements IRoundsManager {
     });
   }
 
-  private setNextRound(
-      players: IPlayersManager,
-      goldPerRound: number,
-      deck: IGameDeck,
-  ) {
-    this.refillPlayers(players, goldPerRound, deck);
-
+  private setNextRound() {
     const nextRound = this.getNextRound();
     this.round = nextRound.round;
     this.stage = nextRound.stage;
-  }
-
-  private refillPlayers(
-      players: IPlayersManager,
-      goldPerRound: number,
-      deck: IGameDeck,
-  ) {
-    // use playersmanager interface
-    players.refillToNextRound(
-        goldPerRound,
-        () => deck.takeRandomHand(),
-    );
   }
 
   private getNextRound(): { round: number, stage: number } {
@@ -115,8 +108,7 @@ export class RoundsManager implements IRoundsManager {
     };
   }
 
-  private checkIfShouldStop(playersList: IPlayersManager): boolean {
-    const players = playersList.getPlayersList();
+  private checkIfShouldStop(players: GamePlayerDTO[]): boolean {
     const remainingPlayers = players.filter((player) => player.life > 0);
     const isOnlyOnePlayerRemaining = remainingPlayers.length < 2;
 

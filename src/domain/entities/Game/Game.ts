@@ -1,10 +1,8 @@
 // import {Character, CharacterAttributes, Sinergy} from './Character';
 // import {Item} from './Item';
 
-import {PlayerCoupleDTO} from './PlayersManager/PlayersList';
 import {
-  DeckForCarousel,
-  CarouselPlayerManager,
+  CarouselStartPlayerManager, DeckForCarousel,
 } from './RoundsManager/Carousel';
 
 // interface Card {
@@ -32,16 +30,14 @@ export interface IGameDeck extends DeckForCarousel {
   takeRandomHand(): IHand[];
 }
 
-export interface IPlayersManager extends CarouselPlayerManager {
-  makeBattleCouples(): PlayerCoupleDTO[]
+export interface IPlayersManager extends CarouselStartPlayerManager {
   validatePlayers(): void;
-  addPlayer(id: string): void;
+  connectPlayer(id: string): void;
   disconnectPlayer(id: string): void
-  getPlayersList(): GamePlayerDTO[];
+  getPlayers(): GamePlayerDTO[];
   getById(id: string): GamePlayerDTO | null;
   setupPlayers(setup: {
     gold: number,
-    getHand: () => IHand,
   }): void;
   refillToNextRound(
     baseGold: number,
@@ -49,10 +45,13 @@ export interface IPlayersManager extends CarouselPlayerManager {
   ): void;
 }
 
+export interface RoundManagerStartRepository {
+  findById(id: string): Promise<GamePlayerDTO | null>,
+  getPlayers(): Promise<GamePlayerDTO[]>
+}
+
 export interface IRoundsManager {
-  start(
-    players: IPlayersManager,
-    goldPerRound: number,
+  startMoments(
     deck: IGameDeck
   ): Promise<void>,
 }
@@ -72,7 +71,6 @@ enum GameStartErrors {
 
 export class Game {
   private static INITIAL_GOLD = 3;
-  private static GOLD_PER_ROUND = 5;
 
   constructor(
       private deck: IGameDeck,
@@ -81,7 +79,7 @@ export class Game {
   ) {}
 
   public handlePlayerConnected(id: string) {
-    this.players.addPlayer(id);
+    this.players.connectPlayer(id);
   }
 
   public handlePlayerDisconnected(id: string) {
@@ -102,21 +100,16 @@ export class Game {
     this.setupPlayers();
 
     this.roundsManager
-        .start(this.players, Game.GOLD_PER_ROUND, this.deck);
-
-    // return {
-    //   players: this.players.getPlayersList(),
-    // };
+        .startMoments(this.deck);
   }
 
   public getPlayers() {
-    return this.players.getPlayersList();
+    return this.players.getPlayers();
   }
 
   private setupPlayers() {
     this.players.setupPlayers({
       gold: Game.INITIAL_GOLD,
-      getHand: () => this.deck.takeRandomHand(),
     });
   }
 }
