@@ -1,7 +1,7 @@
-import {GamePlayerDTO} from '../../entities/Game/Game';
+import {IPlayer} from '../../entities/Game/Game';
 
 export interface PlayerDisconnectionRepository {
-  findById(id: string): Promise<GamePlayerDTO | null>,
+  findById(id: string): Promise<IPlayer | null>,
   setPlayerConnected(id: string, connected?: boolean): Promise<void>
 }
 

@@ -1,6 +1,6 @@
 import {
-  GamePlayerDTO,
-  IGameDeck, IRoundsManager, RoundManagerStartRepository,
+  IPlayer,
+  IGameDeck, IGameMoments, RoundManagerStartRepository,
 } from '../../entities/Game/Game';
 import {
   IGameRoundMoment,
@@ -32,7 +32,7 @@ export interface RoundsManagerEventsDispatcher {
   roundStart(state: RoundsManagerState): void
 }
 
-export class RoundsManager implements IRoundsManager {
+export class RoundsManager implements IGameMoments {
   private stage = 0;
   private round = 0;
 
@@ -108,7 +108,7 @@ export class RoundsManager implements IRoundsManager {
     };
   }
 
-  private checkIfShouldStop(players: GamePlayerDTO[]): boolean {
+  private checkIfShouldStop(players: IPlayer[]): boolean {
     const remainingPlayers = players.filter((player) => player.life > 0);
     const isOnlyOnePlayerRemaining = remainingPlayers.length < 2;
 

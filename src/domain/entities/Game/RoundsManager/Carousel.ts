@@ -1,4 +1,4 @@
-import {GamePlayerDTO} from '../Game';
+import {IPlayer} from '../Game';
 import {PlayerCoupleDTO} from '../PlayersManager/PlayersList';
 import {IGameRoundMoment} from './GameRoundMomentsList';
 
@@ -49,7 +49,7 @@ export class Carousel implements IGameRoundMoment {
   }
 
   public async start(
-      players: GamePlayerDTO[], deck: DeckForCarousel,
+      players: IPlayer[], deck: DeckForCarousel,
   ): Promise<void> {
     const board = deck.takeRandomCarouselBoard();
     const couples = this.makeCouplesByLife(players);
@@ -80,14 +80,14 @@ export class Carousel implements IGameRoundMoment {
     }
   }
 
-  private makeCouplesByLife(players: GamePlayerDTO[]): PlayerCoupleDTO[] {
+  private makeCouplesByLife(players: IPlayer[]): PlayerCoupleDTO[] {
     const playersSortedByLife = this.sortPlayersByLife(players);
     const couples = this.makeCouples(playersSortedByLife);
 
     return couples;
   }
 
-  private makeCouples(players: GamePlayerDTO[]): PlayerCoupleDTO[] {
+  private makeCouples(players: IPlayer[]): PlayerCoupleDTO[] {
     const couples: PlayerCoupleDTO[] = [];
 
     for (let index = 0; index < players.length; index += 2) {
@@ -103,7 +103,7 @@ export class Carousel implements IGameRoundMoment {
     return couples;
   }
 
-  private sortPlayersByLife(players: GamePlayerDTO[]): GamePlayerDTO[] {
+  private sortPlayersByLife(players: IPlayer[]): IPlayer[] {
     return players.slice()
         .sort((a, b) => {
           return a.life - b.life;

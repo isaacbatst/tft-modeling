@@ -1,5 +1,5 @@
 import {
-  GamePlayerDTO,
+  IPlayer,
   IHand,
 } from '../Game';
 import {GamePlayer} from '../GamePlayer';
@@ -13,7 +13,7 @@ export enum PlayersListErrors {
 }
 
 export interface PlayersListEventDispatcher {
-  playersUpdated(players: GamePlayerDTO[]): void
+  playersUpdated(players: IPlayer[]): void
 }
 
 export interface IGamePlayer {
@@ -31,7 +31,7 @@ export interface IGamePlayer {
 
 export type PlayerCouple = [IGamePlayer, IGamePlayer];
 
-export type PlayerCoupleDTO = [GamePlayerDTO, GamePlayerDTO];
+export type PlayerCoupleDTO = [IPlayer, IPlayer];
 
 export class PlayersList implements IPlayersRepository {
   constructor(
@@ -42,7 +42,7 @@ export class PlayersList implements IPlayersRepository {
     return this.players.map(this.toDTO);
   }
 
-  public findById(id: string): GamePlayerDTO | null {
+  public findById(id: string): IPlayer | null {
     const player = this.players.find((player) => player.getId() === id);
 
     return player ? this.toDTO(player) : null;
@@ -116,7 +116,7 @@ export class PlayersList implements IPlayersRepository {
     this.dispatch.playersUpdated(this.players.map(this.toDTO));
   }
 
-  private toDTO(player: IGamePlayer): GamePlayerDTO {
+  private toDTO(player: IGamePlayer): IPlayer {
     return {
       gold: player.getGold(),
       id: player.getId(),

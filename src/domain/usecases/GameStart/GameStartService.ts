@@ -1,9 +1,8 @@
-import {
-  GamePlayerDTO, IGameDeck, IRoundsManager as IMomentsManager,
-} from '../../entities/Game/Game';
+import {IGameMoments, IGameDeck} from '../../entities/Game/interfaces';
+import {IPlayer} from '../../entities/Game/Player';
 
 export interface GameStartRepository {
-  findById(id: string): Promise<GamePlayerDTO | null>,
+  findById(id: string): Promise<IPlayer | null>,
   getPlayersLength(): Promise<number>
 }
 
@@ -14,12 +13,9 @@ enum GameStartErrors {
 }
 
 export class GameStartService {
-  private static INITIAL_GOLD = 3;
-  private static GOLD_PER_ROUND = 5;
-
   constructor(
     private repository: GameStartRepository,
-    private momentsManager: IMomentsManager,
+    private momentsManager: IGameMoments,
     private deck: IGameDeck,
   ) {}
 

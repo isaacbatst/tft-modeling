@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {useEffect, useState} from 'react';
 import {io} from 'socket.io-client';
-import {GamePlayerDTO} from '../../../domain/entities/Game/Game';
+import {IPlayer} from '../../../domain/entities/Game/Game';
 import {
   CarouselState,
 } from '../../../domain/entities/Game/RoundsManager/Carousel';
@@ -13,7 +13,7 @@ import {SocketClient} from '../../server/socket/SocketClient';
 
 export const useLobby = () => {
   const [connected, setConnected] = useState(false);
-  const [playersList, setPlayersList] = useState<GamePlayerDTO[]>([]);
+  const [playersList, setPlayersList] = useState<IPlayer[]>([]);
   const [token, setToken] = useState<string | null>(null);
   const [
     roundManager, setRoundManager,

@@ -1,5 +1,5 @@
 import {
-  GamePlayerDTO,
+  IPlayer,
 } from '../../../../domain/entities/Game/Game';
 import {
   PlayersListEventDispatcher,
@@ -10,7 +10,7 @@ export class SocketIOPlayersListDispatcher implements
   PlayersListEventDispatcher {
   constructor(private socketServer: GameSocketIoServer) {}
 
-  playersUpdated(players: GamePlayerDTO[]): void {
+  playersUpdated(players: IPlayer[]): void {
     this.socketServer.emit('playersUpdated', players);
   }
 }
