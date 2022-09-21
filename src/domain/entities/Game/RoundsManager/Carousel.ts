@@ -55,7 +55,11 @@ export class Carousel implements IGameRoundMoment {
     const couples = this.makeCouplesByLife(players);
 
     await this.releaseCouples(couples, board);
+    await this.finishCarousel(couples, board);
+  }
 
+  private async finishCarousel(
+      couples: PlayerCoupleDTO[], board: ICarouselBoard) {
     await this.countdown.start(Carousel.FINAL_COUNTDOWN_TIME);
 
     this.dispatch.carouselEnd({
