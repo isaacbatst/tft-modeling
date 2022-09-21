@@ -29,11 +29,15 @@ model Player {
   ownedLobbyId Lobby?  @relation("lobby_owner")
 }
 
+enum MomentTypes {
+  CAROUSEL
+}
+
 model Moment {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  name    String
-  lobby   Lobby  @relation(fields: [lobbyId], references: [id])
-  lobbyId String @db.ObjectId
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  lobby      Lobby       @relation(fields: [lobbyId], references: [id])
+  lobbyId    String      @db.ObjectId
 }
 
 enum Game {
@@ -50,3 +54,4 @@ model Lobby {
   owner   Player   @relation("lobby_owner", fields: [ownerId], references: [id])
   ownerId String   @unique @db.ObjectId
 }
+

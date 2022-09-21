@@ -1,10 +1,6 @@
-import {
-  IPlayer,
-  IHand,
-} from '../Game';
-import {GamePlayer} from '../GamePlayer';
 
-import {IPlayersRepository} from './PlayersManager';
+import {GamePlayer} from '../GamePlayer';
+import {IPlayer} from '../Player';
 
 export enum PlayersListErrors {
   BELLOW_MIN_PLAYERS = 'BELLOW_MIN_PLAYERS',

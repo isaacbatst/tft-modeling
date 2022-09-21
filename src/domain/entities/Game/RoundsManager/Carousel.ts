@@ -8,8 +8,10 @@ export interface IGameCountdown {
 }
 
 export interface ICharacterInCarousel {
+  id: string,
   character: { name: string },
-  item: { name: string }
+  item: { name: string },
+  selectedBy: string | null;
 }
 export interface ICarouselBoard {
   getAll(): ICharacterInCarousel[]
