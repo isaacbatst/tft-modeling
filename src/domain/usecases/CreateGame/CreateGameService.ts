@@ -1,5 +1,5 @@
-import {ILobby as ILobby, IPlayer} from '../../entities/Game/Game';
-import {Player} from '../../entities/Game/Player';
+import {ILobby} from '../../entities/Game/Lobby';
+import {IPlayer, Player} from '../../entities/Game/Player';
 import {Games} from '../../entities/Games';
 
 export interface CreateGameRepository {
@@ -22,7 +22,6 @@ export class CreateGameService {
 
     const player = new Player({
       id: playerId,
-      isOwner: true,
     });
 
     await this.repository.createPlayer(player.getDTO(), lobbyId);

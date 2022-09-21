@@ -15,13 +15,13 @@ export class PrismaPlayerRepository implements JoinGameRepository {
     return player;
   }
 
-  async add(player: IPlayer, gameId: string): Promise<void> {
+  async add(player: IPlayer, lobbyId: string): Promise<void> {
     await prisma.player.create({
       data: {
         ...player,
         game: {
           connect: {
-            id: gameId,
+            id: lobbyId,
           },
         },
       },

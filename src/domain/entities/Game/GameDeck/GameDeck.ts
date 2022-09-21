@@ -1,4 +1,4 @@
-import {IGameDeck, IHand} from '../Game';
+import {IGameDeck, IHand} from '../interfaces';
 import {
   ICarouselBoard, ICharacterInCarousel,
 } from '../RoundsManager/Carousel';

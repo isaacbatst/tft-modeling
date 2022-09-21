@@ -1,47 +1,46 @@
+import {GamePlayers} from '../../entities/Game/GamePlayers';
 import {IGameMoments, IGameDeck} from '../../entities/Game/interfaces';
-import {IPlayer} from '../../entities/Game/Player';
+import {IPlayer, Player} from '../../entities/Game/Player';
 
 export interface GameStartRepository {
-  findById(id: string): Promise<IPlayer | null>,
-  getPlayersLength(): Promise<number>
+  getPlayerById(id: string):
+    Promise<IPlayer & { ownedLobbyId: string | null } | null>,
+  getLobbyPlayers(id: string): Promise<IPlayer[] | null>
 }
 
 enum GameStartErrors {
   PLAYER_NOT_FOUND = 'PLAYER_NOT_FOUND',
   PLAYER_IS_NOT_LOBBY_OWNER = 'PLAYER_IS_NOT_LOBBY_OWNER',
-  BELLOW_MIN_PLAYERS = 'BELLOW_MIN_PLAYERS'
+  LOBBY_NOT_FOUND = 'LOBBY_NOT_FOUND'
 }
 
 export class GameStartService {
   constructor(
     private repository: GameStartRepository,
-    private momentsManager: IGameMoments,
+    private moments: IGameMoments,
     private deck: IGameDeck,
   ) {}
 
-  public async execute(id: string) {
-    const player = await this.repository.findById(id);
+  public async execute(playerId: string, lobbyId: string) {
+    const player = await this.repository.getPlayerById(playerId);
 
     if (!player) {
       throw new Error(GameStartErrors.PLAYER_NOT_FOUND);
     }
 
-    if (!player.isOwner) {
+    if (player.ownedLobbyId !== lobbyId) {
       throw new Error(GameStartErrors.PLAYER_IS_NOT_LOBBY_OWNER);
     }
 
-    await this.validatePlayers();
+    const playersDTO = await this.repository.getLobbyPlayers(lobbyId);
 
-    this.momentsManager
-        .startMoments(this.deck);
-  }
-
-
-  private async validatePlayers() {
-    const playersLength = await this.repository.getPlayersLength();
-
-    if (playersLength < 2) {
-      throw new Error(GameStartErrors.BELLOW_MIN_PLAYERS);
+    if (!playersDTO) {
+      throw new Error(GameStartErrors.LOBBY_NOT_FOUND);
     }
+
+    const gamePlayers = new GamePlayers(playersDTO.map(Player.toInstance));
+
+    this.moments
+        .start(this.deck, gamePlayers);
   }
 }

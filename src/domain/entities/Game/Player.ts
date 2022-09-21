@@ -20,10 +20,8 @@
 
 export interface IPlayer {
   id: string;
-  name: string;
   connected: boolean,
   gold: number
-  isOwner: boolean
   life: number
   // gold: number;
   // life: number;
@@ -34,8 +32,6 @@ export interface IPlayer {
 
 interface PlayerParams {
   id: string,
-  isOwner: boolean;
-  name: string;
 }
 
 export class Player {
@@ -43,13 +39,9 @@ export class Player {
   private life: number;
   private gold: number;
   private connected: boolean;
-  private isOwner: boolean;
-  private name: string;
 
   constructor(params: PlayerParams) {
     this.id = params.id;
-    this.isOwner = params.isOwner;
-    this.name = params.name;
     this.life = 100;
     this.gold = 5;
     this.connected = true;
@@ -60,9 +52,13 @@ export class Player {
       connected: this.connected,
       gold: this.gold,
       id: this.id,
-      isOwner: this.isOwner,
       life: this.life,
-      name: this.name,
     };
+  }
+
+  static toInstance(player: IPlayer): Player {
+    return new Player({
+      id: player.id,
+    });
   }
 }

@@ -1,7 +1,8 @@
 import {
-  IPlayer,
-  IGameDeck, IGameMoments, RoundManagerStartRepository,
-} from '../../entities/Game/Game';
+  IGameDeck,
+  IGameMoments, RoundManagerStartRepository,
+} from '../../entities/Game/interfaces';
+import {IPlayer} from '../../entities/Game/Player';
 import {
   IGameRoundMoment,
 } from '../../entities/Game/RoundsManager/GameRoundMomentsList';
@@ -32,18 +33,17 @@ export interface RoundsManagerEventsDispatcher {
   roundStart(state: RoundsManagerState): void
 }
 
-export class RoundsManager implements IGameMoments {
+export class GameMoments implements IGameMoments {
   private stage = 0;
   private round = 0;
 
   constructor(
     private moments: IGameMomentsList,
-    private dispatcher: RoundsManagerEventsDispatcher,
     private repository: RoundManagerStartRepository,
   ) {
   }
 
-  async startMoments(
+  async start(
       deck: IGameDeck,
   ):
       Promise<void> {
@@ -53,8 +53,6 @@ export class RoundsManager implements IGameMoments {
     const moments = this.moments.getAll();
 
     for (let index = 0; index < moments.length; index += 1) {
-      this.dispatchRoundStart();
-
       const moment = moments[index];
 
       const players = await this.repository.getPlayers();
@@ -67,14 +65,6 @@ export class RoundsManager implements IGameMoments {
 
       this.setNextRound();
     }
-  }
-
-  private dispatchRoundStart() {
-    this.dispatcher.roundStart({
-      round: this.round,
-      stage: this.stage,
-      stageRounds: this.moments.getStageRoundsNames(this.stage),
-    });
   }
 
   private setNextRound() {

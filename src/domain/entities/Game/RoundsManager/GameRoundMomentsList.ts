@@ -1,5 +1,6 @@
 import {IGameMomentsList} from '../../../usecases/GameStart/GameMoments';
-import {IPlayer, IGameDeck} from '../Game';
+import {IGameDeck} from '../interfaces';
+import {IPlayer} from '../Player';
 
 export interface IGameRoundMoment {
   start(players: IPlayer[], deck: IGameDeck): Promise<void>

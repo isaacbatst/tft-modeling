@@ -1,3 +1,5 @@
+import {GamePlayers} from './GamePlayers';
+import {IPlayer} from './Player';
 import {DeckForCarousel} from './RoundsManager/Carousel';
 
 export interface IHand {}
@@ -6,20 +8,13 @@ export interface IGameDeck extends DeckForCarousel {
 }
 
 export interface RoundManagerStartRepository {
-  findById(id: string): Promise<GamePlayerDTO | null>,
-  getPlayers(): Promise<GamePlayerDTO[]>
+  findById(id: string): Promise<IPlayer | null>,
+  getPlayers(): Promise<IPlayer[]>
 }
 
 export interface IGameMoments {
-  startMoments(
-    deck: IGameDeck
+  start(
+    deck: IGameDeck,
+    players: GamePlayers
   ): Promise<void>,
-}
-
-export interface GamePlayerDTO {
-  id: string,
-  life: number,
-  gold: number,
-  connected: boolean,
-  isOwner: boolean
 }

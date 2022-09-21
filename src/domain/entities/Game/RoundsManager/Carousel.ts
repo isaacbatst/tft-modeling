@@ -1,4 +1,4 @@
-import {IPlayer} from '../Game';
+import {IPlayer} from '../Player';
 import {PlayerCoupleDTO} from '../PlayersManager/PlayersList';
 import {IGameRoundMoment} from './GameRoundMomentsList';
 
