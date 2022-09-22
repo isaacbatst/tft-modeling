@@ -1,10 +1,9 @@
-import {IPlayer} from '../../entities/Game/Game';
-import {Player} from '../../entities/Game/Player';
+import {IPlayer, Player} from '../../entities/Game/Player';
 
 export interface JoinGameRepository {
   findPlayerById(playerId: string): Promise<IPlayer | null>,
-  add(player: IPlayer, gameId: string): Promise<void>
-  getLobbySize(gameId: string): Promise<number | null>
+  add(player: IPlayer, lobbyId: string): Promise<void>
+  getLobbySize(lobbyId: string): Promise<number | null>
   setPlayerConnected(id: string, connected: boolean): Promise<void>
 }
 
@@ -13,22 +12,28 @@ export class JoinGameService {
     private repository: JoinGameRepository,
   ) {}
 
-  public async execute(playerId: string, gameId: string) {
-    const player = await this.repository.findPlayerById(playerId);
-
-    const lobbySize = await this.repository.getLobbySize(gameId);
-
+  public async execute(playerId: string, lobbyId: string) {
+    const lobbySize = await this.repository.getLobbySize(lobbyId);
     if (lobbySize === null) throw new Error('GAME_NOT_FOUND');
 
-    if (!player) {
-      const newPlayer = new Player({
-        id: playerId,
-        isOwner: lobbySize === 0,
-      });
-
-      return this.repository.add(newPlayer.getDTO(), gameId);
-    }
+    const player = await this.findOrCreatePlayer(playerId, lobbyId);
 
     return this.repository.setPlayerConnected(player.id, true);
+  }
+
+  private async findOrCreatePlayer(playerId: string, lobbyId: string) {
+    const player = await this.repository.findPlayerById(playerId);
+
+    if (player) {
+      return player;
+    }
+
+    const newPlayer = new Player({
+      id: playerId,
+    });
+
+    await this.repository.add(newPlayer.getDTO(), lobbyId);
+
+    return newPlayer.getDTO();
   }
 }
